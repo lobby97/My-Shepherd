@@ -4,7 +4,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { usePlayerStore } from '@/store/playerStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { Moon, Sun, Music, Bell, Info, Heart, Play } from 'lucide-react-native';
+import { Moon, Sun, Music, Bell, Info, Heart, Play, Star, Coffee } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationService } from '@/services/notificationService';
 import { NotificationTimeManager } from '@/components/NotificationTimeManager';
@@ -248,9 +248,18 @@ export default function SettingsScreen() {
           <Text style={[styles.aboutText, { color: theme.text }]}>About</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.aboutRow}>
-          <Heart size={22} color={theme.text} style={styles.settingIcon} />
-          <Text style={[styles.aboutText, { color: theme.text }]}>Support</Text>
+        <TouchableOpacity style={[styles.supportButton, { backgroundColor: theme.primary }]} activeOpacity={0.8}>
+          <View style={styles.supportContent}>
+            <View style={styles.supportIconContainer}>
+              <Coffee size={20} color="#FFFFFF" />
+              <Star size={16} color="#FFFFFF" style={styles.starIcon} />
+            </View>
+            <View style={styles.supportTextContainer}>
+              <Text style={styles.supportTitle}>Pledge your Support</Text>
+              <Text style={styles.supportSubtitle}>Help us keep this app free and growing</Text>
+            </View>
+            <Heart size={20} color="#FFFFFF" />
+          </View>
         </TouchableOpacity>
       </View>
       
@@ -371,6 +380,44 @@ const styles = StyleSheet.create({
   },
   aboutText: {
     fontSize: typography.sizes.md,
+  },
+  supportButton: {
+    marginHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  supportContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  supportIconContainer: {
+    position: 'relative',
+    marginRight: 16,
+  },
+  starIcon: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+  },
+  supportTextContainer: {
+    flex: 1,
+  },
+  supportTitle: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.lg,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  supportSubtitle: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: typography.sizes.sm,
+    fontWeight: '500',
   },
   version: {
     textAlign: 'center',

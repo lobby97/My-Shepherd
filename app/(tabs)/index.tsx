@@ -46,6 +46,12 @@ export default function HomeScreen() {
     playQuote(quotes[randomIndex], quotes);
     router.push(`/quote/${quotes[randomIndex].id}`);
   };
+
+  const handlePlayDaily = () => {
+    // Play the daily quote
+    playQuote(dailyQuote, quotes);
+    router.push(`/quote/${dailyQuote.id}`);
+  };
   
   return (
     <ScrollView 
@@ -54,10 +60,28 @@ export default function HomeScreen() {
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
-        <Text style={[styles.subtitle, { color: theme.secondary }]}>
-          Today's Word
-        </Text>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
+          <Text style={[styles.subtitle, { color: theme.secondary }]}>
+            Today's Word
+          </Text>
+        </View>
+        <View style={styles.headerActions}>
+          <TouchableOpacity 
+            style={[styles.headerButton, { backgroundColor: theme.muted }]}
+            onPress={handlePlayRandom}
+            activeOpacity={0.8}
+          >
+            <Shuffle size={18} color={theme.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.headerButton, { backgroundColor: theme.primary }]}
+            onPress={handlePlayAll}
+            activeOpacity={0.8}
+          >
+            <Play size={18} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
       </View>
       
       <TouchableOpacity 
@@ -75,36 +99,22 @@ export default function HomeScreen() {
           style={styles.gradient}
         />
         <View style={styles.dailyContent}>
-          <View style={styles.dailyBadge}>
-            <Text style={styles.dailyBadgeText}>Daily Quote</Text>
+          <View style={styles.dailyHeader}>
+            <View style={styles.dailyBadge}>
+              <Text style={styles.dailyBadgeText}>Daily Quote</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.dailyPlayButton}
+              onPress={handlePlayDaily}
+              activeOpacity={0.8}
+            >
+              <Play size={16} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
           <Text style={styles.dailyQuote}>{dailyQuote.text}</Text>
           <Text style={styles.dailyReference}>{dailyQuote.reference}</Text>
         </View>
       </TouchableOpacity>
-
-      {/* Quick Actions Section */}
-      <View style={styles.quickActionsSection}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Quick Actions</Text>
-        <View style={styles.quickActions}>
-          <TouchableOpacity 
-            style={[styles.quickActionButton, { backgroundColor: theme.primary }]}
-            onPress={handlePlayAll}
-            activeOpacity={0.8}
-          >
-            <Play size={20} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>Play All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.quickActionButton, { backgroundColor: theme.accent }]}
-            onPress={handlePlayRandom}
-            activeOpacity={0.8}
-          >
-            <Shuffle size={20} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>Shuffle</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
       
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Teachings</Text>
@@ -144,9 +154,15 @@ const styles = StyleSheet.create({
     paddingBottom: 180, // Extra space for bigger mini player and tab bar
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
+  },
+  titleContainer: {
+    flex: 1,
   },
   title: {
     fontSize: typography.sizes.xxl,
@@ -156,6 +172,23 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.md,
     marginBottom: 16,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dailyContainer: {
     height: 240,
@@ -181,18 +214,30 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     padding: 16,
   },
+  dailyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   dailyBadge: {
     backgroundColor: 'rgba(212, 175, 55, 0.8)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    alignSelf: 'flex-start',
-    marginBottom: 12,
   },
   dailyBadgeText: {
     color: '#FFFFFF',
     fontSize: typography.sizes.xs,
     fontWeight: '600',
+  },
+  dailyPlayButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dailyQuote: {
     color: '#FFFFFF',
@@ -205,34 +250,6 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     fontSize: typography.sizes.sm,
     fontStyle: 'italic',
-  },
-  quickActionsSection: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-  },
-  quickActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  quickActionButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  quickActionText: {
-    color: '#FFFFFF',
-    fontSize: typography.sizes.md,
-    fontWeight: '600',
-    marginLeft: 8,
   },
   section: {
     marginBottom: 24,
