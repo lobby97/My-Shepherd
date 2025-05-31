@@ -49,7 +49,7 @@ bun run test-single
 
 This will:
 - Generate one test image using the first image prompt
-- Save it to `assets/images/jesus-command-test.jpg`
+- Save it to `assets/images/jesus-commands/jesus-command-test.jpg`
 - Verify that your API key and setup work correctly
 
 ### Generate All Images (Basic)
@@ -85,6 +85,32 @@ cd scripts
 bun run generate-images-force
 ```
 
+### Regenerate Specific Images (NEW!)
+
+Regenerate only specific images you didn't like by providing their IDs:
+
+```bash
+cd scripts
+# Regenerate a single image
+bun run regenerate-specific 5
+
+# Regenerate multiple images
+bun run regenerate-specific 1 5 10 25 100
+
+# Alternative syntax with quotes
+bun run regenerate-specific "1" "5" "10"
+```
+
+This **selective regeneration** will:
+- ✅ Only regenerate the specified IDs
+- ✅ Automatically backup existing images before replacing them
+- ✅ Update the JSON with new image paths
+- ✅ Preserve all other existing images
+- ✅ Show detailed results for each ID
+- ✅ Handle missing IDs gracefully
+
+**Perfect for**: When you want to replace a few images you didn't like without regenerating everything!
+
 ## Scripts Overview
 
 | Script | Purpose | Resume Support | Use Case |
@@ -94,6 +120,7 @@ bun run generate-images-force
 | `generate-images` | Basic batch generation | ❌ | Simple one-time run |
 | `generate-images-resume` | Smart batch generation | ✅ | Recommended for large batches |
 | `generate-images-force` | Force regenerate all | ❌ | Redo all images |
+| `regenerate-specific` | Regenerate selected IDs | N/A | Replace specific images |
 
 ## Output
 
@@ -168,17 +195,22 @@ scripts/
 ├── generate-images.ts          # Basic batch processing script
 ├── generate-images-resume.ts   # Resumable batch processing (recommended)
 ├── test-single-image.ts        # Single image test script
-├── check-status.ts            # Status checking script
-├── package.json               # Dependencies and scripts
-└── README.md                  # This file
+├── check-status.ts             # Status checking script
+├── regenerate-specific.ts      # Selective regeneration script (NEW!)
+├── package.json                # Dependencies and scripts
+└── README.md                   # This file
 
 assets/
 ├── jesus_commands.json          # Original data
 ├── jesus_commands_updated.json  # Final output with image paths
 ├── jesus_commands_progress.json # Progress backup file
-└── images/                      # Generated images
-    ├── jesus-command-1.jpg
-    ├── jesus-command-2.jpg
-    ├── jesus-command-test.jpg   # Test image
-    └── ...
+└── images/
+    └── jesus-commands/          # Generated images directory
+        ├── jesus-command-1.jpg
+        ├── jesus-command-2.jpg
+        ├── jesus-command-test.jpg   # Test image
+        ├── backup/                  # Backup images (created by regenerate-specific)
+        │   ├── jesus-command-5-backup-1234567890.jpg
+        │   └── ...
+        └── ...
 ``` 

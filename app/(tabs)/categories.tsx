@@ -1,7 +1,7 @@
-import jesusCommands from "@/assets/jesus_commands.json";
 import { CategoryCard } from "@/components/CategoryCard";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { getProcessedCommands } from "@/lib/commandsData";
 import { categories } from "@/mocks/categories";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Quote } from "@/types";
@@ -10,7 +10,8 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 export default function CategoriesScreen() {
   const router = useRouter();

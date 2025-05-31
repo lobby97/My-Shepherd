@@ -1,6 +1,7 @@
-import jesusCommands from "@/assets/jesus_commands.json";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { getProcessedCommands } from "@/lib/commandsData";
+import { getImageAsset } from "@/lib/imageAssets";
 import { categories } from "@/mocks/categories";
 import { usePlayerStore } from "@/store/playerStore";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -17,7 +18,8 @@ import {
   View,
 } from "react-native";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 export default function CategoryScreen() {
   const { id } = useLocalSearchParams();
@@ -144,7 +146,7 @@ export default function CategoryScreen() {
                 activeOpacity={0.7}
               >
                 <Image
-                  source={{ uri: quote.imageUrl }}
+                  source={getImageAsset(quote.id)}
                   style={styles.teachingImage}
                   contentFit="cover"
                 />

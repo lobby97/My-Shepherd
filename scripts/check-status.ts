@@ -17,7 +17,7 @@ interface JesusCommand {
 async function checkStatus() {
   const projectRoot = process.cwd().replace("/scripts", ""); // Go back to project root
   const assetsDir = path.join(projectRoot, "assets");
-  const imagesDir = path.join(assetsDir, "images");
+  const imagesDir = path.join(assetsDir, "images/jesus-commands");
 
   try {
     // Read JSON file

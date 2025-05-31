@@ -1,7 +1,8 @@
-import jesusCommands from "@/assets/jesus_commands.json";
 import { AudioWaveform } from "@/components/AudioWaveform";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { getProcessedCommands } from "@/lib/commandsData";
+import { getImageAsset } from "@/lib/imageAssets";
 import { usePlayerStore } from "@/store/playerStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Quote } from "@/types";
@@ -21,6 +22,7 @@ import {
 } from "lucide-react-native";
 import React, { useEffect } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   Platform,
   ScrollView,
@@ -30,14 +32,17 @@ import {
   View,
 } from "react-native";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 export default function QuoteDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const { isDarkMode } = useSettingsStore();
   const {
     currentQuote,
     isPlaying,
+    isLoading,
     currentPlaylist,
     currentIndex,
     playQuote,
@@ -45,15 +50,33 @@ export default function QuoteDetailScreen() {
     resumeQuote,
     nextQuote,
     previousQuote,
+    clearCurrentQuote,
     toggleFavorite,
     isFavorite,
     addToHistory,
   } = usePlayerStore();
-  const { isDarkMode } = useSettingsStore();
 
   const theme = isDarkMode ? colors.dark : colors.light;
 
-  const quote = quotes.find((q) => q.id === id);
+  // Get the quote from URL parameter
+  const urlQuote = quotes.find((q) => q.id === id);
+
+  // Use the currently playing quote if we're in a playlist and it's playing,
+  // otherwise use the quote from the URL
+  const quote =
+    currentQuote && currentPlaylist.length > 1 && isPlaying
+      ? currentQuote
+      : urlQuote;
+
+  // Debug logging
+  useEffect(() => {
+    console.log(
+      `Quote page - URL ID: ${id}, Current Quote: ${currentQuote?.id}, Displayed Quote: ${quote?.id}`
+    );
+    console.log(
+      `Playlist length: ${currentPlaylist.length}, IsPlaying: ${isPlaying}`
+    );
+  }, [id, currentQuote?.id, quote?.id, currentPlaylist.length, isPlaying]);
 
   if (!quote) {
     return (
@@ -66,27 +89,45 @@ export default function QuoteDetailScreen() {
   }
 
   const isCurrentQuote = currentQuote?.id === quote.id;
-  const isCurrentlyPlaying = isCurrentQuote && isPlaying;
+  const isCurrentlyPlaying = isCurrentQuote && isPlaying && !isLoading;
+  const isCurrentAndLoading = isCurrentQuote && isLoading;
   const isFavorited = isFavorite(quote.id);
   const showPlaylistControls = currentPlaylist.length > 1;
 
+  // Update history when the displayed quote changes
   useEffect(() => {
     addToHistory(quote.id);
   }, [quote.id]);
 
-  const handlePlayPause = () => {
-    if (isCurrentQuote) {
-      isPlaying ? pauseQuote() : resumeQuote();
+  // Update the URL when the currently playing quote changes during playlist playback
+  useEffect(() => {
+    if (
+      currentQuote &&
+      currentPlaylist.length > 1 &&
+      isPlaying &&
+      currentQuote.id !== id
+    ) {
+      // Only replace the URL, don't push to avoid creating navigation history
+      router.replace(`/quote/${currentQuote.id}`);
+    }
+  }, [currentQuote?.id, currentPlaylist.length, isPlaying]);
+
+  const handlePlayPause = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    if (currentQuote?.id === quote.id) {
+      if (isPlaying) {
+        await pauseQuote();
+      } else {
+        await resumeQuote();
+      }
     } else {
-      // Start playing this quote with all quotes as playlist
-      playQuote(quote, quotes);
+      await playQuote(quote, quotes);
     }
   };
 
-  const handleFavorite = () => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+  const handleFavorite = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     toggleFavorite(quote.id);
   };
 
@@ -109,9 +150,13 @@ export default function QuoteDetailScreen() {
     previousQuote();
   };
 
-  const handlePlayAll = () => {
-    // Start playing from this quote with all quotes as playlist
-    playQuote(quote, quotes);
+  const handlePlayAll = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // Start playing from the current quote (the one shown on this page)
+    const displayedQuote = quote || urlQuote;
+    if (displayedQuote) {
+      await playQuote(displayedQuote, quotes);
+    }
   };
 
   return (
@@ -123,7 +168,7 @@ export default function QuoteDetailScreen() {
       />
 
       <Image
-        source={{ uri: quote.imageUrl }}
+        source={getImageAsset(quote.id)}
         style={styles.backgroundImage}
         contentFit="cover"
       />
@@ -198,8 +243,11 @@ export default function QuoteDetailScreen() {
             <TouchableOpacity
               style={styles.playButton}
               onPress={handlePlayPause}
+              disabled={isCurrentAndLoading}
             >
-              {isCurrentlyPlaying ? (
+              {isCurrentAndLoading ? (
+                <ActivityIndicator size={32} color="#FFFFFF" />
+              ) : isCurrentlyPlaying ? (
                 <Pause size={32} color="#FFFFFF" />
               ) : (
                 <Play size={32} color="#FFFFFF" />

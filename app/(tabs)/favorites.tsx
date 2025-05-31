@@ -1,7 +1,7 @@
-import jesusCommands from "@/assets/jesus_commands.json";
 import { QuoteCard } from "@/components/QuoteCard";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { getProcessedCommands } from "@/lib/commandsData";
 import { usePlayerStore } from "@/store/playerStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Quote } from "@/types";
@@ -17,7 +17,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -41,69 +42,71 @@ export default function FavoritesScreen() {
     }
   };
 
-  if (favoriteQuotes.length === 0) {
-    return (
-      <View
-        style={[
-          styles.emptyContainer,
-          { backgroundColor: theme.background, paddingTop: insets.top },
-        ]}
-      >
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
-          <Text style={[styles.subtitle, { color: theme.secondary }]}>
-            Your saved teachings
-          </Text>
-        </View>
-
-        <View style={styles.emptyContent}>
-          <BookmarkIcon size={64} color={theme.secondary} />
-          <Text style={[styles.emptyTitle, { color: theme.text }]}>
-            No favorites yet
-          </Text>
-          <Text style={[styles.emptySubtitle, { color: theme.secondary }]}>
-            Tap the heart icon on any quote to add it to your favorites
-          </Text>
-        </View>
-      </View>
-    );
-  }
-
   return (
     <ScrollView
       style={[
         styles.container,
         { backgroundColor: theme.background, paddingTop: insets.top },
       ]}
+      contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <View>
-            <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
-            <Text style={[styles.subtitle, { color: theme.secondary }]}>
-              Your saved teachings
-            </Text>
-          </View>
+        <View style={styles.titleContainer}>
+          <BookmarkIcon size={32} color={theme.primary} />
+          <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
+        </View>
+        <Text style={[styles.subtitle, { color: theme.secondary }]}>
+          Your saved teachings
+        </Text>
+      </View>
+
+      {favoriteQuotes.length > 0 ? (
+        <>
           <TouchableOpacity
-            style={[styles.playAllButton, { backgroundColor: theme.primary }]}
+            style={[
+              styles.playAllCard,
+              { backgroundColor: theme.card, borderColor: theme.border },
+            ]}
             onPress={handlePlayAllFavorites}
             activeOpacity={0.8}
           >
-            <Play size={16} color="#FFFFFF" />
-            <Text style={styles.playAllButtonText}>Play All</Text>
+            <View
+              style={[styles.playAllIcon, { backgroundColor: theme.primary }]}
+            >
+              <Play size={24} color="#FFFFFF" />
+            </View>
+            <View style={styles.playAllContent}>
+              <Text style={[styles.playAllTitle, { color: theme.text }]}>
+                Play All Favorites
+              </Text>
+              <Text
+                style={[styles.playAllSubtitle, { color: theme.secondary }]}
+              >
+                Listen to your {favoriteQuotes.length} favorite teachings
+              </Text>
+            </View>
           </TouchableOpacity>
-        </View>
-      </View>
 
-      {favoriteQuotes.map((quote) => (
-        <QuoteCard
-          key={quote.id}
-          quote={quote}
-          onPress={() => handleQuotePress(quote.id)}
-        />
-      ))}
+          {favoriteQuotes.map((quote) => (
+            <QuoteCard
+              key={quote.id}
+              quote={quote}
+              onPress={() => handleQuotePress(quote.id)}
+            />
+          ))}
+        </>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <BookmarkIcon size={64} color={theme.muted} />
+          <Text style={[styles.emptyTitle, { color: theme.text }]}>
+            No Favorites Yet
+          </Text>
+          <Text style={[styles.emptySubtitle, { color: theme.secondary }]}>
+            Tap the heart icon on any teaching to add it to your favorites
+          </Text>
+        </View>
+      )}
 
       <View style={styles.footer} />
     </ScrollView>
@@ -177,5 +180,38 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: 20,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  playAllCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderWidth: 2,
+    borderColor: "#000",
+    borderRadius: 20,
+  },
+  playAllIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playAllContent: {
+    marginLeft: 12,
+  },
+  playAllTitle: {
+    fontSize: typography.sizes.md,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  playAllSubtitle: {
+    fontSize: typography.sizes.sm,
+  },
+  content: {
+    paddingBottom: 180, // Extra space for bigger mini player and tab bar
   },
 });

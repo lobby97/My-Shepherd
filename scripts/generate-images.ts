@@ -146,7 +146,7 @@ class FluxImageGenerator {
       await this.downloadImage(imageUrl, filename);
       console.log(`✅ Image saved as: ${filename}`);
 
-      return `./assets/images/${filename}`;
+      return `./assets/images/jesus-commands/${filename}`;
     } catch (error) {
       console.error(`❌ Error generating image for ID ${id}:`, error);
       throw error;
@@ -235,7 +235,7 @@ async function main() {
     process.exit(1);
   }
 
-  const projectRoot = process.cwd();
+  const projectRoot = process.cwd().replace("/scripts", ""); // Go back to project root
   const generator = new FluxImageGenerator(apiKey, projectRoot);
 
   try {

@@ -1,10 +1,11 @@
-import jesusCommands from "@/assets/jesus_commands.json";
+import { getProcessedCommands } from "@/lib/commandsData";
 import { NotificationTime } from "@/store/settingsStore";
 import { Quote } from "@/types";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -64,6 +65,7 @@ export class NotificationService {
               sound: true,
             },
             trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
               hour: time.hour,
               minute: time.minute,
               repeats: true,
@@ -106,6 +108,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
           hour: 8,
           minute: 0,
           repeats: true,
@@ -120,6 +123,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
           hour: 12,
           minute: 0,
           repeats: true,
@@ -134,6 +138,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
           hour: 20,
           minute: 0,
           repeats: true,

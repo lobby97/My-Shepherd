@@ -1,7 +1,8 @@
-import jesusCommands from "@/assets/jesus_commands.json";
 import { QuoteCard } from "@/components/QuoteCard";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { getProcessedCommands } from "@/lib/commandsData";
+import { getImageAsset } from "@/lib/imageAssets";
 import { usePlayerStore } from "@/store/playerStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Quote } from "@/types";
@@ -19,7 +20,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const quotes = jesusCommands as Quote[];
+// Use processed commands with local assets
+const quotes = getProcessedCommands() as Quote[];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -81,7 +83,7 @@ export default function HomeScreen() {
         activeOpacity={0.9}
       >
         <Image
-          source={{ uri: dailyQuote.imageUrl }}
+          source={getImageAsset(dailyQuote.id)}
           style={styles.dailyImage}
           contentFit="cover"
         />

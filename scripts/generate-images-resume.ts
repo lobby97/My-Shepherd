@@ -111,7 +111,7 @@ class FluxImageGeneratorResumable {
 
       if (data.status === "Ready" && data.result?.sample) {
         return data.result.sample;
-      } else if (data.status !== "Processing" && data.status !== "Queued") {
+      } else if (data.status !== "Pending" && data.status !== "Queued") {
         throw new Error(`Unexpected status: ${data.status}`);
       }
     }
@@ -158,7 +158,7 @@ class FluxImageGeneratorResumable {
       await this.downloadImage(imageUrl, filename);
       console.log(`✅ Image saved as: ${filename}`);
 
-      return `./assets/images/${filename}`;
+      return `./assets/images/jesus-commands/${filename}`;
     } catch (error) {
       console.error(`❌ Error generating image for ID ${id}:`, error);
       throw error;
@@ -200,7 +200,7 @@ class FluxImageGeneratorResumable {
       toProcess.push(...commands);
     }
 
-    console.log(`📊 Processing Summary:`);
+    console.log(`📊 Pending Summary:`);
     console.log(`   Total commands: ${commands.length}`);
     console.log(`   Already completed: ${skippedCount}`);
     console.log(`   To process: ${toProcess.length}`);
@@ -218,7 +218,7 @@ class FluxImageGeneratorResumable {
     for (const command of commands) {
       const exists = await this.imageExists(command.id);
       if (exists) {
-        const imagePath = `./assets/images/jesus-command-${command.id}.jpg`;
+        const imagePath = `./assets/images/jesus-commands/jesus-command-${command.id}.jpg`;
         updatedCommands.push({
           ...command,
           imageUrl: imagePath,
@@ -230,7 +230,7 @@ class FluxImageGeneratorResumable {
     for (let i = 0; i < toProcess.length; i++) {
       const command = toProcess[i];
       console.log(
-        `\n📍 Processing ${i + 1}/${toProcess.length} - ID: ${command.id}`
+        `\n📍 Pending ${i + 1}/${toProcess.length} - ID: ${command.id}`
       );
       console.log(
         `📊 Overall progress: ${skippedCount + successCount + errorCount + 1}/${
@@ -295,7 +295,7 @@ class FluxImageGeneratorResumable {
       JSON.stringify(updatedCommands, null, 2)
     );
 
-    console.log("\n🎉 Batch processing complete!");
+    console.log("\n🎉 Batch Pending complete!");
     console.log(`⏭️  Skipped (already existed): ${skippedCount} images`);
     console.log(`✅ Successfully generated: ${successCount} images`);
     console.log(`❌ Failed: ${errorCount} images`);
@@ -320,7 +320,7 @@ async function main() {
     process.exit(1);
   }
 
-  const projectRoot = process.cwd();
+  const projectRoot = process.cwd().replace("/scripts", ""); // Go back to project root
   const generator = new FluxImageGeneratorResumable(apiKey, projectRoot);
 
   // Check if user wants to force regenerate all images
