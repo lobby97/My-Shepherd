@@ -6,11 +6,19 @@ import { Quote } from '@/types';
 interface PlayerState {
   currentQuote: Quote | null;
   isPlaying: boolean;
+  isAutoPlayEnabled: boolean;
+  autoPlayMode: 'all' | 'category' | 'favorites';
+  currentPlaylist: Quote[];
+  currentIndex: number;
   favorites: string[];
   history: string[];
-  playQuote: (quote: Quote) => void;
+  playQuote: (quote: Quote, playlist?: Quote[]) => void;
   pauseQuote: () => void;
   resumeQuote: () => void;
+  nextQuote: () => void;
+  previousQuote: () => void;
+  toggleAutoPlay: () => void;
+  setAutoPlayMode: (mode: 'all' | 'category' | 'favorites') => void;
   toggleFavorite: (quoteId: string) => void;
   isFavorite: (quoteId: string) => boolean;
   addToHistory: (quoteId: string) => void;
@@ -21,14 +29,76 @@ export const usePlayerStore = create<PlayerState>()(
     (set, get) => ({
       currentQuote: null,
       isPlaying: false,
+      isAutoPlayEnabled: false,
+      autoPlayMode: 'all',
+      currentPlaylist: [],
+      currentIndex: 0,
       favorites: [],
       history: [],
       
-      playQuote: (quote) => set({ currentQuote: quote, isPlaying: true }),
+      playQuote: (quote, playlist = []) => {
+        const currentPlaylist = playlist.length > 0 ? playlist : [quote];
+        const currentIndex = currentPlaylist.findIndex(q => q.id === quote.id);
+        
+        set({ 
+          currentQuote: quote, 
+          isPlaying: true,
+          currentPlaylist,
+          currentIndex: currentIndex >= 0 ? currentIndex : 0
+        });
+      },
       
       pauseQuote: () => set({ isPlaying: false }),
       
       resumeQuote: () => set({ isPlaying: true }),
+      
+      nextQuote: () => {
+        const { currentPlaylist, currentIndex, isAutoPlayEnabled } = get();
+        
+        if (currentPlaylist.length === 0) return;
+        
+        const nextIndex = (currentIndex + 1) % currentPlaylist.length;
+        const nextQuote = currentPlaylist[nextIndex];
+        
+        if (nextQuote) {
+          set({
+            currentQuote: nextQuote,
+            currentIndex: nextIndex,
+            isPlaying: isAutoPlayEnabled
+          });
+          
+          // Add to history
+          get().addToHistory(nextQuote.id);
+        }
+      },
+      
+      previousQuote: () => {
+        const { currentPlaylist, currentIndex } = get();
+        
+        if (currentPlaylist.length === 0) return;
+        
+        const prevIndex = currentIndex === 0 ? currentPlaylist.length - 1 : currentIndex - 1;
+        const prevQuote = currentPlaylist[prevIndex];
+        
+        if (prevQuote) {
+          set({
+            currentQuote: prevQuote,
+            currentIndex: prevIndex,
+            isPlaying: true
+          });
+          
+          // Add to history
+          get().addToHistory(prevQuote.id);
+        }
+      },
+      
+      toggleAutoPlay: () => {
+        set(state => ({ isAutoPlayEnabled: !state.isAutoPlayEnabled }));
+      },
+      
+      setAutoPlayMode: (mode) => {
+        set({ autoPlayMode: mode });
+      },
       
       toggleFavorite: (quoteId) => {
         const favorites = [...get().favorites];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { Image } from 'expo-image';
-import { Play, Pause, X } from 'lucide-react-native';
+import { Play, Pause, SkipForward, SkipBack, Repeat } from 'lucide-react-native';
 import { usePlayerStore } from '@/store/playerStore';
 import { useRouter } from 'expo-router';
 import { colors } from '@/constants/colors';
@@ -10,7 +10,17 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const MiniPlayer: React.FC = () => {
-  const { currentQuote, isPlaying, pauseQuote, resumeQuote } = usePlayerStore();
+  const { 
+    currentQuote, 
+    isPlaying, 
+    isAutoPlayEnabled,
+    currentPlaylist,
+    pauseQuote, 
+    resumeQuote,
+    nextQuote,
+    previousQuote,
+    toggleAutoPlay
+  } = usePlayerStore();
   const { isDarkMode } = useSettingsStore();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -27,12 +37,26 @@ export const MiniPlayer: React.FC = () => {
     router.push(`/quote/${currentQuote.id}`);
   };
   
+  const handleNext = () => {
+    nextQuote();
+  };
+  
+  const handlePrevious = () => {
+    previousQuote();
+  };
+  
+  const handleToggleAutoPlay = () => {
+    toggleAutoPlay();
+  };
+  
   const tabBarHeight = Platform.select({
     ios: 65 + insets.bottom,
     android: 65,
     web: 70,
     default: 70,
   });
+  
+  const showPlaylistControls = currentPlaylist.length > 1;
   
   return (
     <View style={[styles.container, { bottom: tabBarHeight + 8 }]}>
@@ -63,16 +87,52 @@ export const MiniPlayer: React.FC = () => {
             {currentQuote.category}
           </Text>
         </View>
-        <TouchableOpacity
-          style={styles.playButton}
-          onPress={handlePlayPause}
-        >
-          {isPlaying ? (
-            <Pause size={18} color={theme.primary} />
-          ) : (
-            <Play size={18} color={theme.primary} />
+        
+        <View style={styles.controls}>
+          {showPlaylistControls && (
+            <TouchableOpacity
+              style={styles.controlButton}
+              onPress={handlePrevious}
+            >
+              <SkipBack size={16} color={theme.primary} />
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.playButton}
+            onPress={handlePlayPause}
+          >
+            {isPlaying ? (
+              <Pause size={18} color={theme.primary} />
+            ) : (
+              <Play size={18} color={theme.primary} />
+            )}
+          </TouchableOpacity>
+          
+          {showPlaylistControls && (
+            <>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={handleNext}
+              >
+                <SkipForward size={16} color={theme.primary} />
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={[
+                  styles.controlButton,
+                  isAutoPlayEnabled && { backgroundColor: theme.primary }
+                ]}
+                onPress={handleToggleAutoPlay}
+              >
+                <Repeat 
+                  size={16} 
+                  color={isAutoPlayEnabled ? '#FFFFFF' : theme.primary} 
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -88,7 +148,7 @@ const styles = StyleSheet.create({
     zIndex: 500,
   },
   playerContainer: {
-    height: 52,
+    height: 64,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
@@ -101,9 +161,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   image: {
-    width: 36,
-    height: 36,
-    borderRadius: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 6,
   },
   content: {
     flex: 1,
@@ -118,12 +178,25 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xs,
     fontWeight: '500',
   },
+  controls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
   playButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  controlButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
+    marginHorizontal: 2,
   },
 });

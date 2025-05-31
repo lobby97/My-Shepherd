@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Switch, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useSettingsStore } from '@/store/settingsStore';
+import { usePlayerStore } from '@/store/playerStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { Moon, Sun, Music, Bell, Info, Heart } from 'lucide-react-native';
+import { Moon, Sun, Music, Bell, Info, Heart, Play } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationService } from '@/services/notificationService';
 import { Platform } from 'react-native';
@@ -19,12 +20,25 @@ export default function SettingsScreen() {
     toggleBackgroundMusic,
     toggleDailyNotifications
   } = useSettingsStore();
+  
+  const {
+    isAutoPlayEnabled,
+    autoPlayMode,
+    toggleAutoPlay,
+    setAutoPlayMode
+  } = usePlayerStore();
+  
   const insets = useSafeAreaInsets();
   const [notificationCount, setNotificationCount] = useState(0);
   
   const theme = isDarkMode ? colors.dark : colors.light;
   
   const playbackOptions = [0.75, 1.0, 1.25, 1.5];
+  const autoPlayModes = [
+    { value: 'all', label: 'All Teachings' },
+    { value: 'category', label: 'Current Category' },
+    { value: 'favorites', label: 'Favorites Only' }
+  ];
 
   useEffect(() => {
     // Check scheduled notifications count
@@ -75,6 +89,10 @@ export default function SettingsScreen() {
       </View>
       
       <View style={[styles.section, { borderBottomColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Appearance
+        </Text>
+        
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
             {isDarkMode ? (
@@ -93,6 +111,12 @@ export default function SettingsScreen() {
             thumbColor="#FFFFFF"
           />
         </View>
+      </View>
+      
+      <View style={[styles.section, { borderBottomColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Audio & Playback
+        </Text>
         
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
@@ -108,6 +132,78 @@ export default function SettingsScreen() {
             thumbColor="#FFFFFF"
           />
         </View>
+        
+        <View style={styles.settingRow}>
+          <View style={styles.settingLabelContainer}>
+            <Play size={22} color={theme.text} style={styles.settingIcon} />
+            <Text style={[styles.settingLabel, { color: theme.text }]}>
+              Auto-play
+            </Text>
+          </View>
+          <Switch
+            value={isAutoPlayEnabled}
+            onValueChange={toggleAutoPlay}
+            trackColor={{ false: '#767577', true: theme.primary }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
+        
+        <Text style={[styles.subSectionTitle, { color: theme.text }]}>
+          Playback Speed
+        </Text>
+        <View style={styles.speedOptions}>
+          {playbackOptions.map(speed => (
+            <TouchableOpacity
+              key={speed}
+              style={[
+                styles.speedOption,
+                playbackSpeed === speed && [styles.speedOptionActive, { backgroundColor: theme.primary }]
+              ]}
+              onPress={() => setPlaybackSpeed(speed)}
+            >
+              <Text
+                style={[
+                  styles.speedText,
+                  playbackSpeed === speed ? styles.speedTextActive : { color: theme.text }
+                ]}
+              >
+                {speed}x
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        
+        <Text style={[styles.subSectionTitle, { color: theme.text }]}>
+          Auto-play Mode
+        </Text>
+        <View style={styles.autoPlayModes}>
+          {autoPlayModes.map(mode => (
+            <TouchableOpacity
+              key={mode.value}
+              style={[
+                styles.autoPlayModeOption,
+                { borderColor: theme.border },
+                autoPlayMode === mode.value && [styles.autoPlayModeActive, { backgroundColor: theme.primary }]
+              ]}
+              onPress={() => setAutoPlayMode(mode.value as 'all' | 'category' | 'favorites')}
+            >
+              <Text
+                style={[
+                  styles.autoPlayModeText,
+                  autoPlayMode === mode.value ? styles.autoPlayModeTextActive : { color: theme.text }
+                ]}
+              >
+                {mode.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+      
+      <View style={[styles.section, { borderBottomColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Notifications
+        </Text>
         
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
@@ -135,33 +231,6 @@ export default function SettingsScreen() {
             thumbColor="#FFFFFF"
             disabled={Platform.OS === 'web'}
           />
-        </View>
-      </View>
-      
-      <View style={[styles.section, { borderBottomColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Playback Speed
-        </Text>
-        <View style={styles.speedOptions}>
-          {playbackOptions.map(speed => (
-            <TouchableOpacity
-              key={speed}
-              style={[
-                styles.speedOption,
-                playbackSpeed === speed && [styles.speedOptionActive, { backgroundColor: theme.primary }]
-              ]}
-              onPress={() => setPlaybackSpeed(speed)}
-            >
-              <Text
-                style={[
-                  styles.speedText,
-                  playbackSpeed === speed ? styles.speedTextActive : { color: theme.text }
-                ]}
-              >
-                {speed}x
-              </Text>
-            </TouchableOpacity>
-          ))}
         </View>
       </View>
       
@@ -218,6 +287,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 16,
   },
+  subSectionTitle: {
+    fontSize: typography.sizes.md,
+    fontWeight: '600',
+    marginTop: 16,
+    marginBottom: 12,
+  },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -256,6 +331,27 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.md,
   },
   speedTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  autoPlayModes: {
+    gap: 8,
+  },
+  autoPlayModeOption: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+  },
+  autoPlayModeActive: {
+    backgroundColor: '#223C63',
+  },
+  autoPlayModeText: {
+    fontSize: typography.sizes.md,
+    textAlign: 'center',
+  },
+  autoPlayModeTextActive: {
     color: '#FFFFFF',
     fontWeight: '600',
   },

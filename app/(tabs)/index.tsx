@@ -10,11 +10,12 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Play } from 'lucide-react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { isDarkMode } = useSettingsStore();
-  const { history, addToHistory } = usePlayerStore();
+  const { history, addToHistory, playQuote } = usePlayerStore();
   const insets = useSafeAreaInsets();
   
   const theme = isDarkMode ? colors.dark : colors.light;
@@ -32,6 +33,12 @@ export default function HomeScreen() {
     addToHistory(id);
     router.push(`/quote/${id}`);
   };
+
+  const handlePlayAll = () => {
+    // Start playing from the first quote with all quotes as playlist
+    playQuote(quotes[0], quotes);
+    router.push(`/quote/${quotes[0].id}`);
+  };
   
   return (
     <ScrollView 
@@ -40,10 +47,22 @@ export default function HomeScreen() {
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
-        <Text style={[styles.subtitle, { color: theme.secondary }]}>
-          Today's Word
-        </Text>
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
+            <Text style={[styles.subtitle, { color: theme.secondary }]}>
+              Today's Word
+            </Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.playAllButton, { backgroundColor: theme.primary }]}
+            onPress={handlePlayAll}
+            activeOpacity={0.8}
+          >
+            <Play size={16} color="#FFFFFF" />
+            <Text style={styles.playAllButtonText}>Play All</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       
       <TouchableOpacity 
@@ -111,6 +130,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 8,
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
   title: {
     fontSize: typography.sizes.xxl,
     fontFamily: typography.quoteFont,
@@ -119,6 +143,24 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.md,
     marginBottom: 16,
+  },
+  playAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  playAllButtonText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.sm,
+    fontWeight: '600',
+    marginLeft: 6,
   },
   dailyContainer: {
     height: 240,

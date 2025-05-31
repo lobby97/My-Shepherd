@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { QuoteCard } from '@/components/QuoteCard';
 import { quotes } from '@/mocks/quotes';
@@ -7,12 +7,12 @@ import { usePlayerStore } from '@/store/playerStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { BookmarkIcon } from 'lucide-react-native';
+import { BookmarkIcon, Play } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FavoritesScreen() {
   const router = useRouter();
-  const { favorites, addToHistory } = usePlayerStore();
+  const { favorites, addToHistory, playQuote } = usePlayerStore();
   const { isDarkMode } = useSettingsStore();
   const insets = useSafeAreaInsets();
   
@@ -23,6 +23,13 @@ export default function FavoritesScreen() {
   const handleQuotePress = (id: string) => {
     addToHistory(id);
     router.push(`/quote/${id}`);
+  };
+
+  const handlePlayAllFavorites = () => {
+    if (favoriteQuotes.length > 0) {
+      playQuote(favoriteQuotes[0], favoriteQuotes);
+      router.push(`/quote/${favoriteQuotes[0].id}`);
+    }
   };
   
   if (favoriteQuotes.length === 0) {
@@ -53,10 +60,22 @@ export default function FavoritesScreen() {
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
-        <Text style={[styles.subtitle, { color: theme.secondary }]}>
-          Your saved teachings
-        </Text>
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
+            <Text style={[styles.subtitle, { color: theme.secondary }]}>
+              Your saved teachings
+            </Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.playAllButton, { backgroundColor: theme.primary }]}
+            onPress={handlePlayAllFavorites}
+            activeOpacity={0.8}
+          >
+            <Play size={16} color="#FFFFFF" />
+            <Text style={styles.playAllButtonText}>Play All</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       
       {favoriteQuotes.map(quote => (
@@ -84,6 +103,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 8,
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
   title: {
     fontSize: typography.sizes.xxl,
     fontFamily: typography.quoteFont,
@@ -92,6 +116,24 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.md,
     marginBottom: 16,
+  },
+  playAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  playAllButtonText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.sm,
+    fontWeight: '600',
+    marginLeft: 6,
   },
   emptyContainer: {
     flex: 1,

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Image } from 'expo-image';
-import { Play, Pause, ArrowLeft } from 'lucide-react-native';
+import { Play, Pause, ArrowLeft, List } from 'lucide-react-native';
 import { quotes } from '@/mocks/quotes';
 import { categories } from '@/mocks/categories';
 import { usePlayerStore } from '@/store/playerStore';
@@ -42,12 +42,19 @@ export default function CategoryScreen() {
     if (isCurrentQuote) {
       isPlaying ? pauseQuote() : resumeQuote();
     } else {
-      playQuote(quote);
+      playQuote(quote, categoryQuotes);
     }
   };
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  const handlePlayAllCategory = () => {
+    if (categoryQuotes.length > 0) {
+      playQuote(categoryQuotes[0], categoryQuotes);
+      router.push(`/quote/${categoryQuotes[0].id}`);
+    }
   };
   
   return (
@@ -71,7 +78,13 @@ export default function CategoryScreen() {
           <ArrowLeft size={24} color={theme.text} strokeWidth={2.5} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]}>{category.name}</Text>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity 
+          style={[styles.playAllButton, { backgroundColor: theme.primary }]}
+          onPress={handlePlayAllCategory}
+          activeOpacity={0.8}
+        >
+          <List size={16} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
       
       <View style={styles.header}>
@@ -85,9 +98,11 @@ export default function CategoryScreen() {
       </View>
       
       <View style={styles.teachingsContainer}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Teachings ({categoryQuotes.length})
-        </Text>
+        <View style={styles.teachingsHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>
+            Teachings ({categoryQuotes.length})
+          </Text>
+        </View>
         
         {categoryQuotes.length > 0 ? (
           categoryQuotes.map(quote => {
@@ -169,8 +184,12 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  headerSpacer: {
+  playAllButton: {
     width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
@@ -201,10 +220,15 @@ const styles = StyleSheet.create({
   teachingsContainer: {
     paddingHorizontal: 16,
   },
+  teachingsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: '600',
-    marginBottom: 16,
   },
   teachingItem: {
     flexDirection: 'row',

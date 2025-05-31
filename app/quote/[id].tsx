@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { Play, Pause, Heart, Share2, ArrowLeft } from 'lucide-react-native';
+import { Play, Pause, Heart, Share2, ArrowLeft, SkipForward, SkipBack, Repeat, List } from 'lucide-react-native';
 import { quotes } from '@/mocks/quotes';
 import { usePlayerStore } from '@/store/playerStore';
 import { AudioWaveform } from '@/components/AudioWaveform';
@@ -19,10 +19,16 @@ export default function QuoteDetailScreen() {
   const router = useRouter();
   const { 
     currentQuote, 
-    isPlaying, 
+    isPlaying,
+    isAutoPlayEnabled,
+    currentPlaylist,
+    currentIndex,
     playQuote, 
     pauseQuote, 
-    resumeQuote, 
+    resumeQuote,
+    nextQuote,
+    previousQuote,
+    toggleAutoPlay,
     toggleFavorite, 
     isFavorite,
     addToHistory
@@ -44,6 +50,7 @@ export default function QuoteDetailScreen() {
   const isCurrentQuote = currentQuote?.id === quote.id;
   const isCurrentlyPlaying = isCurrentQuote && isPlaying;
   const isFavorited = isFavorite(quote.id);
+  const showPlaylistControls = currentPlaylist.length > 1;
   
   useEffect(() => {
     addToHistory(quote.id);
@@ -53,7 +60,8 @@ export default function QuoteDetailScreen() {
     if (isCurrentQuote) {
       isPlaying ? pauseQuote() : resumeQuote();
     } else {
-      playQuote(quote);
+      // Start playing this quote with all quotes as playlist
+      playQuote(quote, quotes);
     }
   };
   
@@ -73,6 +81,23 @@ export default function QuoteDetailScreen() {
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  const handleNext = () => {
+    nextQuote();
+  };
+
+  const handlePrevious = () => {
+    previousQuote();
+  };
+
+  const handleToggleAutoPlay = () => {
+    toggleAutoPlay();
+  };
+
+  const handlePlayAll = () => {
+    // Start playing from this quote with all quotes as playlist
+    playQuote(quote, quotes);
   };
   
   return (
@@ -103,6 +128,17 @@ export default function QuoteDetailScreen() {
         >
           <ArrowLeft size={24} color="#FFFFFF" strokeWidth={2.5} />
         </TouchableOpacity>
+        
+        {!isCurrentQuote && (
+          <TouchableOpacity 
+            style={styles.playAllButton}
+            onPress={handlePlayAll}
+            activeOpacity={0.8}
+          >
+            <List size={20} color="#FFFFFF" strokeWidth={2} />
+            <Text style={styles.playAllText}>Play All</Text>
+          </TouchableOpacity>
+        )}
       </View>
       
       <ScrollView 
@@ -133,6 +169,15 @@ export default function QuoteDetailScreen() {
               />
             </TouchableOpacity>
             
+            {showPlaylistControls && (
+              <TouchableOpacity 
+                style={styles.controlButton} 
+                onPress={handlePrevious}
+              >
+                <SkipBack size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+            
             <TouchableOpacity 
               style={styles.playButton} 
               onPress={handlePlayPause}
@@ -144,6 +189,15 @@ export default function QuoteDetailScreen() {
               )}
             </TouchableOpacity>
             
+            {showPlaylistControls && (
+              <TouchableOpacity 
+                style={styles.controlButton} 
+                onPress={handleNext}
+              >
+                <SkipForward size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+            
             <TouchableOpacity 
               style={styles.shareButton} 
               onPress={handleShare}
@@ -151,6 +205,32 @@ export default function QuoteDetailScreen() {
               <Share2 size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
+          
+          {showPlaylistControls && (
+            <View style={styles.playlistInfo}>
+              <Text style={styles.playlistText}>
+                {currentIndex + 1} of {currentPlaylist.length}
+              </Text>
+              <TouchableOpacity 
+                style={[
+                  styles.autoPlayButton,
+                  isAutoPlayEnabled && styles.autoPlayActive
+                ]}
+                onPress={handleToggleAutoPlay}
+              >
+                <Repeat 
+                  size={20} 
+                  color={isAutoPlayEnabled ? '#E25822' : '#FFFFFF'} 
+                />
+                <Text style={[
+                  styles.autoPlayText,
+                  { color: isAutoPlayEnabled ? '#E25822' : '#FFFFFF' }
+                ]}>
+                  Auto-play
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
           
           {isCurrentlyPlaying && (
             <View style={styles.waveformContainer}>
@@ -194,6 +274,9 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
     paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   backButton: {
     width: 44,
@@ -207,6 +290,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+  },
+  playAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  playAllText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.sm,
+    fontWeight: '600',
+    marginLeft: 6,
   },
   scrollView: {
     flex: 1,
@@ -259,6 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    marginBottom: 16,
   },
   playButton: {
     width: 80,
@@ -267,7 +370,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 40,
+    marginHorizontal: 20,
+  },
+  controlButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 10,
   },
   favoriteButton: {
     width: 50,
@@ -276,6 +388,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    left: 0,
   },
   favoriteActive: {
     backgroundColor: 'rgba(255,255,255,0.3)',
@@ -287,6 +401,35 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    right: 0,
+  },
+  playlistInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 16,
+  },
+  playlistText: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: typography.sizes.sm,
+  },
+  autoPlayButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  autoPlayActive: {
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  autoPlayText: {
+    fontSize: typography.sizes.xs,
+    fontWeight: '600',
+    marginLeft: 4,
   },
   waveformContainer: {
     marginTop: 20,
