@@ -4,6 +4,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Moon, Sun, Music, Bell, Info, Heart } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const { 
@@ -16,6 +17,7 @@ export default function SettingsScreen() {
     toggleBackgroundMusic,
     toggleDailyNotifications
   } = useSettingsStore();
+  const insets = useSafeAreaInsets();
   
   const theme = isDarkMode ? colors.dark : colors.light;
   
@@ -23,9 +25,16 @@ export default function SettingsScreen() {
   
   return (
     <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
       contentContainerStyle={styles.content}
     >
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
+        <Text style={[styles.subtitle, { color: theme.secondary }]}>
+          Customize your experience
+        </Text>
+      </View>
+      
       <View style={[styles.section, { borderBottomColor: theme.border }]}>
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
@@ -130,10 +139,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 160, // Extra space for bigger mini player and tab bar
+    paddingBottom: 180, // Extra space for bigger mini player and tab bar
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  title: {
+    fontSize: typography.sizes.xxl,
+    fontFamily: typography.quoteFont,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: typography.sizes.md,
+    marginBottom: 16,
   },
   section: {
+    marginHorizontal: 16,
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
@@ -183,6 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   aboutText: {
     fontSize: typography.sizes.md,

@@ -9,11 +9,13 @@ import { usePlayerStore } from '@/store/playerStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { isDarkMode } = useSettingsStore();
   const { history, addToHistory } = usePlayerStore();
+  const insets = useSafeAreaInsets();
   
   const theme = isDarkMode ? colors.dark : colors.light;
   
@@ -33,7 +35,7 @@ export default function HomeScreen() {
   
   return (
     <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
     >
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 160, // Extra space for bigger mini player and tab bar
+    paddingBottom: 180, // Extra space for bigger mini player and tab bar
   },
   header: {
     paddingHorizontal: 16,

@@ -22,23 +22,23 @@ export default function TabLayout() {
             backgroundColor: theme.card,
             borderTopColor: theme.border,
             borderTopWidth: 1,
-            paddingTop: 12,
+            paddingTop: 16,
             paddingBottom: Platform.select({
-              ios: insets.bottom + 12,
-              default: 16,
+              ios: insets.bottom + 16,
+              default: 20,
             }),
-            paddingHorizontal: 8,
+            paddingHorizontal: 12,
             height: Platform.select({
-              ios: 80 + insets.bottom,
-              android: 80,
-              web: 85,
-              default: 85,
+              ios: 95 + insets.bottom,
+              android: 95,
+              web: 100,
+              default: 100,
             }),
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
-            zIndex: 1000,
+            zIndex: 100,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: -2 },
             shadowOpacity: 0.1,
@@ -50,12 +50,12 @@ export default function TabLayout() {
           },
           headerTintColor: theme.text,
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: '600',
-            marginTop: 4,
+            marginTop: 6,
           },
           tabBarIconStyle: {
-            marginBottom: 2,
+            marginBottom: 4,
           },
         }}
       >
@@ -63,9 +63,10 @@ export default function TabLayout() {
           name="index"
           options={{
             title: "Today",
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Home 
-                size={focused ? 32 : 28} 
+                size={focused ? 36 : 32} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
@@ -76,54 +77,42 @@ export default function TabLayout() {
           name="categories"
           options={{
             title: "Categories",
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Search 
-                size={focused ? 32 : 28} 
+                size={focused ? 36 : 32} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
             ),
-            headerTitle: "Categories",
-            headerTitleStyle: {
-              fontSize: 20,
-              fontWeight: '600',
-            },
           }}
         />
         <Tabs.Screen
           name="favorites"
           options={{
             title: "Favorites",
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <BookmarkIcon 
-                size={focused ? 32 : 28} 
+                size={focused ? 36 : 32} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
             ),
-            headerTitle: "Favorites",
-            headerTitleStyle: {
-              fontSize: 20,
-              fontWeight: '600',
-            },
           }}
         />
         <Tabs.Screen
           name="settings"
           options={{
             title: "Settings",
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Settings 
-                size={focused ? 32 : 28} 
+                size={focused ? 36 : 32} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
             ),
-            headerTitle: "Settings",
-            headerTitleStyle: {
-              fontSize: 20,
-              fontWeight: '600',
-            },
           }}
         />
       </Tabs>

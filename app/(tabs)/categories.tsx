@@ -1,14 +1,17 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CategoryCard } from '@/components/CategoryCard';
 import { categories } from '@/mocks/categories';
 import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
+import { typography } from '@/constants/typography';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CategoriesScreen() {
   const router = useRouter();
   const { isDarkMode } = useSettingsStore();
+  const insets = useSafeAreaInsets();
   
   const theme = isDarkMode ? colors.dark : colors.light;
   
@@ -18,10 +21,17 @@ export default function CategoriesScreen() {
   
   return (
     <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: theme.text }]}>Categories</Text>
+        <Text style={[styles.subtitle, { color: theme.secondary }]}>
+          Browse teachings by topic
+        </Text>
+      </View>
+      
       <View style={styles.grid}>
         {categories.map(category => (
           <CategoryCard
@@ -42,14 +52,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 160, // Extra space for bigger mini player and tab bar
+    paddingBottom: 180, // Extra space for bigger mini player and tab bar
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  title: {
+    fontSize: typography.sizes.xxl,
+    fontFamily: typography.quoteFont,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: typography.sizes.md,
+    marginBottom: 16,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginHorizontal: -8,
+    marginHorizontal: 8,
   },
   footer: {
     height: 20,

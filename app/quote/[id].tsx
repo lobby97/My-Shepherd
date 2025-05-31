@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { Play, Pause, Heart, Share2 } from 'lucide-react-native';
+import { Play, Pause, Heart, Share2, ArrowLeft } from 'lucide-react-native';
 import { quotes } from '@/mocks/quotes';
 import { usePlayerStore } from '@/store/playerStore';
 import { AudioWaveform } from '@/components/AudioWaveform';
@@ -12,9 +12,11 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function QuoteDetailScreen() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
   const { 
     currentQuote, 
     isPlaying, 
@@ -68,21 +70,16 @@ export default function QuoteDetailScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
+
+  const handleGoBack = () => {
+    router.back();
+  };
   
   return (
     <View style={styles.container}>
       <Stack.Screen 
         options={{
-          title: "",
-          headerTransparent: true,
-          headerStyle: {
-            backgroundColor: 'rgba(0,0,0,0.3)',
-          },
-          headerTintColor: "#FFFFFF",
-          headerBackTitle: "Back",
-          headerTitleStyle: {
-            color: "#FFFFFF",
-          },
+          headerShown: false,
         }}
       />
       
@@ -96,6 +93,17 @@ export default function QuoteDetailScreen() {
         colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.8)']}
         style={styles.gradient}
       />
+
+      {/* Custom Header with Back Button */}
+      <View style={styles.customHeader}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={handleGoBack}
+          activeOpacity={0.8}
+        >
+          <ArrowLeft size={24} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
+      </View>
       
       <ScrollView 
         style={styles.scrollView}
@@ -179,12 +187,33 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+  customHeader: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    paddingHorizontal: 16,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   scrollView: {
     flex: 1,
   },
   content: {
     padding: 20,
-    paddingTop: 100,
+    paddingTop: 120,
     paddingBottom: 40,
   },
   categoryContainer: {

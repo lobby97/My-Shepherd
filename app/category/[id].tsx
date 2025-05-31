@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Image } from 'expo-image';
-import { Play, Pause } from 'lucide-react-native';
+import { Play, Pause, ArrowLeft } from 'lucide-react-native';
 import { quotes } from '@/mocks/quotes';
 import { categories } from '@/mocks/categories';
 import { usePlayerStore } from '@/store/playerStore';
@@ -45,6 +45,10 @@ export default function CategoryScreen() {
       playQuote(quote);
     }
   };
+
+  const handleGoBack = () => {
+    router.back();
+  };
   
   return (
     <ScrollView 
@@ -53,10 +57,22 @@ export default function CategoryScreen() {
     >
       <Stack.Screen 
         options={{
-          title: category.name,
-          headerBackTitle: "Categories",
+          headerShown: false,
         }}
       />
+
+      {/* Custom Header */}
+      <View style={[styles.customHeader, { backgroundColor: theme.background }]}>
+        <TouchableOpacity 
+          style={[styles.backButton, { backgroundColor: theme.muted }]}
+          onPress={handleGoBack}
+          activeOpacity={0.8}
+        >
+          <ArrowLeft size={24} color={theme.text} strokeWidth={2.5} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>{category.name}</Text>
+        <View style={styles.headerSpacer} />
+      </View>
       
       <View style={styles.header}>
         <View style={[styles.iconContainer, { backgroundColor: theme.muted }]}>
@@ -129,6 +145,32 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  customHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 50,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: typography.sizes.lg,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+  },
+  headerSpacer: {
+    width: 40,
   },
   header: {
     alignItems: 'center',
@@ -216,6 +258,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   footer: {
-    height: 160, // Extra space for bigger mini player and tab bar
+    height: 180, // Extra space for bigger mini player and tab bar
   },
 });

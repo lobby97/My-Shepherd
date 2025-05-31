@@ -28,10 +28,10 @@ export const MiniPlayer: React.FC = () => {
   };
   
   const tabBarHeight = Platform.select({
-    ios: 80 + insets.bottom,
-    android: 80,
-    web: 85,
-    default: 85,
+    ios: 95 + insets.bottom,
+    android: 95,
+    web: 100,
+    default: 100,
   });
   
   return (
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
-    zIndex: 999,
+    zIndex: 500,
   },
   playerContainer: {
     height: 64,
