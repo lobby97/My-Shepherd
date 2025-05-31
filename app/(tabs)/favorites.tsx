@@ -1,25 +1,34 @@
-import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { QuoteCard } from '@/components/QuoteCard';
-import { quotes } from '@/mocks/quotes';
-import { usePlayerStore } from '@/store/playerStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { BookmarkIcon, Play } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import jesusCommands from "@/assets/jesus_commands.json";
+import { QuoteCard } from "@/components/QuoteCard";
+import { colors } from "@/constants/colors";
+import { typography } from "@/constants/typography";
+import { usePlayerStore } from "@/store/playerStore";
+import { useSettingsStore } from "@/store/settingsStore";
+import { Quote } from "@/types";
+import { useRouter } from "expo-router";
+import { BookmarkIcon, Play } from "lucide-react-native";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const quotes = jesusCommands as Quote[];
 
 export default function FavoritesScreen() {
   const router = useRouter();
   const { favorites, addToHistory, playQuote } = usePlayerStore();
   const { isDarkMode } = useSettingsStore();
   const insets = useSafeAreaInsets();
-  
+
   const theme = isDarkMode ? colors.dark : colors.light;
-  
-  const favoriteQuotes = quotes.filter(quote => favorites.includes(quote.id));
-  
+
+  const favoriteQuotes = quotes.filter((quote) => favorites.includes(quote.id));
+
   const handleQuotePress = (id: string) => {
     addToHistory(id);
     router.push(`/quote/${id}`);
@@ -31,20 +40,27 @@ export default function FavoritesScreen() {
       router.push(`/quote/${favoriteQuotes[0].id}`);
     }
   };
-  
+
   if (favoriteQuotes.length === 0) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: theme.background, paddingTop: insets.top }]}>
+      <View
+        style={[
+          styles.emptyContainer,
+          { backgroundColor: theme.background, paddingTop: insets.top },
+        ]}
+      >
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.text }]}>Favorites</Text>
           <Text style={[styles.subtitle, { color: theme.secondary }]}>
             Your saved teachings
           </Text>
         </View>
-        
+
         <View style={styles.emptyContent}>
           <BookmarkIcon size={64} color={theme.secondary} />
-          <Text style={[styles.emptyTitle, { color: theme.text }]}>No favorites yet</Text>
+          <Text style={[styles.emptyTitle, { color: theme.text }]}>
+            No favorites yet
+          </Text>
           <Text style={[styles.emptySubtitle, { color: theme.secondary }]}>
             Tap the heart icon on any quote to add it to your favorites
           </Text>
@@ -52,10 +68,13 @@ export default function FavoritesScreen() {
       </View>
     );
   }
-  
+
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: theme.background, paddingTop: insets.top },
+      ]}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
     >
@@ -67,7 +86,7 @@ export default function FavoritesScreen() {
               Your saved teachings
             </Text>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.playAllButton, { backgroundColor: theme.primary }]}
             onPress={handlePlayAllFavorites}
             activeOpacity={0.8}
@@ -77,15 +96,15 @@ export default function FavoritesScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      
-      {favoriteQuotes.map(quote => (
-        <QuoteCard 
-          key={quote.id} 
-          quote={quote} 
+
+      {favoriteQuotes.map((quote) => (
+        <QuoteCard
+          key={quote.id}
+          quote={quote}
           onPress={() => handleQuotePress(quote.id)}
         />
       ))}
-      
+
       <View style={styles.footer} />
     </ScrollView>
   );
@@ -104,9 +123,9 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   title: {
     fontSize: typography.sizes.xxl,
@@ -118,21 +137,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   playAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   playAllButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.sm,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 6,
   },
   emptyContainer: {
@@ -140,20 +159,20 @@ const styles = StyleSheet.create({
   },
   emptyContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 32,
   },
   emptyTitle: {
     fontSize: typography.sizes.xl,
-    fontWeight: '600',
+    fontWeight: "600",
     marginTop: 16,
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptySubtitle: {
     fontSize: typography.sizes.md,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 24,
   },
   footer: {

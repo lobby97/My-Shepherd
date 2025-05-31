@@ -1,0 +1,19 @@
+{
+  "name": "voice-of-the-shepherd-scripts",
+  "version": "1.0.0",
+  "description": "Image generation scripts for Voice of the Shepherd",
+  "main": "generate-images.ts",
+  "scripts": {
+    "generate-images": "bun run generate-images.ts",
+    "generate-images-resume": "bun run generate-images-resume.ts",
+    "generate-images-force": "bun run generate-images-resume.ts --force",
+    "test-single": "bun run test-single-image.ts",
+    "status": "bun run check-status.ts"
+  },
+  "dependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

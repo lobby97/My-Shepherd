@@ -1,27 +1,39 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
-import { useRouter } from 'expo-router';
-import { CategoryCard } from '@/components/CategoryCard';
-import { categories } from '@/mocks/categories';
-import { useSettingsStore } from '@/store/settingsStore';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import jesusCommands from "@/assets/jesus_commands.json";
+import { CategoryCard } from "@/components/CategoryCard";
+import { colors } from "@/constants/colors";
+import { typography } from "@/constants/typography";
+import { categories } from "@/mocks/categories";
+import { useSettingsStore } from "@/store/settingsStore";
+import { Quote } from "@/types";
+import { useRouter } from "expo-router";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const quotes = jesusCommands as Quote[];
 
 export default function CategoriesScreen() {
   const router = useRouter();
   const { isDarkMode } = useSettingsStore();
   const insets = useSafeAreaInsets();
-  
+
   const theme = isDarkMode ? colors.dark : colors.light;
-  
+
   const handleCategoryPress = (id: string) => {
     router.push(`/category/${id}`);
   };
-  
+
+  // Calculate quote count for each category
+  const getCategoryQuoteCount = (categoryName: string) => {
+    return quotes.filter((quote) => quote.category === categoryName).length;
+  };
+
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: theme.background, paddingTop: insets.top },
+      ]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
@@ -31,17 +43,20 @@ export default function CategoriesScreen() {
           Browse teachings by topic
         </Text>
       </View>
-      
+
       <View style={styles.grid}>
-        {categories.map(category => (
-          <CategoryCard
-            key={category.id}
-            category={category}
-            onPress={() => handleCategoryPress(category.id)}
-          />
-        ))}
+        {categories.map((category) => {
+          const quoteCount = getCategoryQuoteCount(category.name);
+          return (
+            <CategoryCard
+              key={category.id}
+              category={{ ...category, quoteCount }}
+              onPress={() => handleCategoryPress(category.id)}
+            />
+          );
+        })}
       </View>
-      
+
       <View style={styles.footer} />
     </ScrollView>
   );
@@ -69,9 +84,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     marginHorizontal: 8,
   },
   footer: {

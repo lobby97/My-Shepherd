@@ -1,34 +1,43 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { QuoteCard } from '@/components/QuoteCard';
-import { quotes } from '@/mocks/quotes';
-import { usePlayerStore } from '@/store/playerStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Play, Shuffle } from 'lucide-react-native';
+import jesusCommands from "@/assets/jesus_commands.json";
+import { QuoteCard } from "@/components/QuoteCard";
+import { colors } from "@/constants/colors";
+import { typography } from "@/constants/typography";
+import { usePlayerStore } from "@/store/playerStore";
+import { useSettingsStore } from "@/store/settingsStore";
+import { Quote } from "@/types";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { Play, Shuffle } from "lucide-react-native";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const quotes = jesusCommands as Quote[];
 
 export default function HomeScreen() {
   const router = useRouter();
   const { isDarkMode } = useSettingsStore();
   const { history, addToHistory, playQuote } = usePlayerStore();
   const insets = useSafeAreaInsets();
-  
+
   const theme = isDarkMode ? colors.dark : colors.light;
-  
+
   // Get a random quote for the daily feature
   const dailyQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  
+
   // Get recent quotes from history
   const recentQuotes = history
     .slice(0, 5)
-    .map(id => quotes.find(q => q.id === id))
+    .map((id) => quotes.find((q) => q.id === id))
     .filter(Boolean);
-  
+
   const handleQuotePress = (id: string) => {
     addToHistory(id);
     router.push(`/quote/${id}`);
@@ -45,34 +54,39 @@ export default function HomeScreen() {
     playQuote(dailyQuote, quotes);
     router.push(`/quote/${dailyQuote.id}`);
   };
-  
+
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: theme.background, paddingTop: insets.top },
+      ]}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
         <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
+          <Text style={[styles.title, { color: theme.text }]}>
+            Voice of the Shepherd 3
+          </Text>
           <Text style={[styles.subtitle, { color: theme.secondary }]}>
             Home
           </Text>
         </View>
       </View>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={styles.dailyContainer}
         onPress={() => handleQuotePress(dailyQuote.id)}
         activeOpacity={0.9}
       >
-        <Image 
-          source={{ uri: dailyQuote.imageUrl }} 
+        <Image
+          source={{ uri: dailyQuote.imageUrl }}
           style={styles.dailyImage}
           contentFit="cover"
         />
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.7)']}
+          colors={["transparent", "rgba(0,0,0,0.7)"]}
           style={styles.gradient}
         />
         <View style={styles.dailyContent}>
@@ -80,7 +94,7 @@ export default function HomeScreen() {
             <View style={styles.dailyBadge}>
               <Text style={styles.dailyBadgeText}>Daily Quote</Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.dailyPlayButton}
               onPress={handlePlayDaily}
               activeOpacity={0.8}
@@ -92,52 +106,65 @@ export default function HomeScreen() {
           <Text style={styles.dailyReference}>{dailyQuote.reference}</Text>
         </View>
       </TouchableOpacity>
-      
+
       {/* Play All Teachings Button */}
-      <TouchableOpacity 
-        style={[styles.playAllCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+      <TouchableOpacity
+        style={[
+          styles.playAllCard,
+          { backgroundColor: theme.card, borderColor: theme.border },
+        ]}
         onPress={handlePlayAll}
         activeOpacity={0.8}
       >
-        <View style={[styles.playAllIconLeft, { backgroundColor: theme.primary }]}>
+        <View
+          style={[styles.playAllIconLeft, { backgroundColor: theme.primary }]}
+        >
           <Shuffle size={24} color="#FFFFFF" />
         </View>
         <View style={styles.playAllContent}>
-          <Text style={[styles.playAllTitle, { color: theme.text }]}>Play All Teachings</Text>
+          <Text style={[styles.playAllTitle, { color: theme.text }]}>
+            Play All Teachings
+          </Text>
           <Text style={[styles.playAllSubtitle, { color: theme.secondary }]}>
             Listen to all {quotes.length} teachings in sequence
           </Text>
         </View>
-        <View style={[styles.playAllIconRight, { backgroundColor: theme.primary }]}>
+        <View
+          style={[styles.playAllIconRight, { backgroundColor: theme.primary }]}
+        >
           <Play size={20} color="#FFFFFF" />
         </View>
       </TouchableOpacity>
-      
+
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Teachings</Text>
-        {quotes.slice(0, 3).map(quote => (
-          <QuoteCard 
-            key={quote.id} 
-            quote={quote} 
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Featured Teachings
+        </Text>
+        {quotes.slice(0, 3).map((quote) => (
+          <QuoteCard
+            key={quote.id}
+            quote={quote}
             onPress={() => handleQuotePress(quote.id)}
           />
         ))}
       </View>
-      
+
       {recentQuotes.length > 0 && (
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Recently Viewed</Text>
-          {recentQuotes.map(quote => (
-            <QuoteCard 
-              key={quote?.id} 
-              quote={quote!} 
-              compact 
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>
+            Recently Viewed
+          </Text>
+          {recentQuotes.map((quote) => (
+            <QuoteCard
+              key={quote?.id}
+              quote={quote!}
+              compact
               onPress={() => handleQuotePress(quote!.id)}
             />
           ))}
         </View>
       )}
-      
+
       <View style={styles.footer} />
     </ScrollView>
   );
@@ -151,9 +178,9 @@ const styles = StyleSheet.create({
     paddingBottom: 180, // Extra space for bigger mini player and tab bar
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
@@ -174,72 +201,72 @@ const styles = StyleSheet.create({
     height: 240,
     marginHorizontal: 16,
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 16,
   },
   dailyImage: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
+    width: "100%",
+    height: "100%",
+    position: "absolute",
   },
   gradient: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: '70%',
+    height: "70%",
   },
   dailyContent: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     padding: 16,
   },
   dailyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 12,
   },
   dailyBadge: {
-    backgroundColor: 'rgba(212, 175, 55, 0.8)',
+    backgroundColor: "rgba(212, 175, 55, 0.8)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
   },
   dailyBadgeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.xs,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   dailyPlayButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   dailyQuote: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.lg,
     fontFamily: typography.quoteFont,
     marginBottom: 8,
     lineHeight: typography.sizes.lg * 1.4,
   },
   dailyReference: {
-    color: 'rgba(255,255,255,0.8)',
+    color: "rgba(255,255,255,0.8)",
     fontSize: typography.sizes.sm,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   playAllCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 16,
     marginBottom: 24,
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -249,8 +276,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 16,
   },
   playAllContent: {
@@ -258,7 +285,7 @@ const styles = StyleSheet.create({
   },
   playAllTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
   },
   playAllSubtitle: {
@@ -268,8 +295,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginLeft: 12,
   },
   section: {
@@ -277,7 +304,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
     marginHorizontal: 16,
     marginBottom: 12,
   },
