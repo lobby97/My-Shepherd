@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { Play, Pause, Heart, Share2, ArrowLeft, SkipForward, SkipBack, Repeat, List } from 'lucide-react-native';
+import { Play, Pause, Heart, Share2, ArrowLeft, SkipForward, SkipBack, List } from 'lucide-react-native';
 import { quotes } from '@/mocks/quotes';
 import { usePlayerStore } from '@/store/playerStore';
 import { AudioWaveform } from '@/components/AudioWaveform';
@@ -20,7 +20,6 @@ export default function QuoteDetailScreen() {
   const { 
     currentQuote, 
     isPlaying,
-    isAutoPlayEnabled,
     currentPlaylist,
     currentIndex,
     playQuote, 
@@ -28,7 +27,6 @@ export default function QuoteDetailScreen() {
     resumeQuote,
     nextQuote,
     previousQuote,
-    toggleAutoPlay,
     toggleFavorite, 
     isFavorite,
     addToHistory
@@ -89,10 +87,6 @@ export default function QuoteDetailScreen() {
 
   const handlePrevious = () => {
     previousQuote();
-  };
-
-  const handleToggleAutoPlay = () => {
-    toggleAutoPlay();
   };
 
   const handlePlayAll = () => {
@@ -211,24 +205,6 @@ export default function QuoteDetailScreen() {
               <Text style={styles.playlistText}>
                 {currentIndex + 1} of {currentPlaylist.length}
               </Text>
-              <TouchableOpacity 
-                style={[
-                  styles.autoPlayButton,
-                  isAutoPlayEnabled && styles.autoPlayActive
-                ]}
-                onPress={handleToggleAutoPlay}
-              >
-                <Repeat 
-                  size={20} 
-                  color={isAutoPlayEnabled ? '#E25822' : '#FFFFFF'} 
-                />
-                <Text style={[
-                  styles.autoPlayText,
-                  { color: isAutoPlayEnabled ? '#E25822' : '#FFFFFF' }
-                ]}>
-                  Auto-play
-                </Text>
-              </TouchableOpacity>
             </View>
           )}
           
@@ -407,29 +383,13 @@ const styles = StyleSheet.create({
   playlistInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
     marginBottom: 16,
   },
   playlistText: {
     color: 'rgba(255,255,255,0.8)',
     fontSize: typography.sizes.sm,
-  },
-  autoPlayButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  autoPlayActive: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  autoPlayText: {
-    fontSize: typography.sizes.xs,
-    fontWeight: '600',
-    marginLeft: 4,
   },
   waveformContainer: {
     marginTop: 20,

@@ -6,8 +6,6 @@ import { Quote } from '@/types';
 interface PlayerState {
   currentQuote: Quote | null;
   isPlaying: boolean;
-  isAutoPlayEnabled: boolean;
-  autoPlayMode: 'all' | 'category' | 'favorites';
   currentPlaylist: Quote[];
   currentIndex: number;
   favorites: string[];
@@ -17,8 +15,6 @@ interface PlayerState {
   resumeQuote: () => void;
   nextQuote: () => void;
   previousQuote: () => void;
-  toggleAutoPlay: () => void;
-  setAutoPlayMode: (mode: 'all' | 'category' | 'favorites') => void;
   toggleFavorite: (quoteId: string) => void;
   isFavorite: (quoteId: string) => boolean;
   addToHistory: (quoteId: string) => void;
@@ -29,8 +25,6 @@ export const usePlayerStore = create<PlayerState>()(
     (set, get) => ({
       currentQuote: null,
       isPlaying: false,
-      isAutoPlayEnabled: false,
-      autoPlayMode: 'all',
       currentPlaylist: [],
       currentIndex: 0,
       favorites: [],
@@ -53,7 +47,7 @@ export const usePlayerStore = create<PlayerState>()(
       resumeQuote: () => set({ isPlaying: true }),
       
       nextQuote: () => {
-        const { currentPlaylist, currentIndex, isAutoPlayEnabled } = get();
+        const { currentPlaylist, currentIndex } = get();
         
         if (currentPlaylist.length === 0) return;
         
@@ -64,7 +58,7 @@ export const usePlayerStore = create<PlayerState>()(
           set({
             currentQuote: nextQuote,
             currentIndex: nextIndex,
-            isPlaying: isAutoPlayEnabled
+            isPlaying: true
           });
           
           // Add to history
@@ -90,14 +84,6 @@ export const usePlayerStore = create<PlayerState>()(
           // Add to history
           get().addToHistory(prevQuote.id);
         }
-      },
-      
-      toggleAutoPlay: () => {
-        set(state => ({ isAutoPlayEnabled: !state.isAutoPlayEnabled }));
-      },
-      
-      setAutoPlayMode: (mode) => {
-        set({ autoPlayMode: mode });
       },
       
       toggleFavorite: (quoteId) => {

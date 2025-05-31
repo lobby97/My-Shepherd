@@ -161,14 +161,11 @@ export default function SettingsScreen() {
       </View>
       
       <View style={styles.section}>
-        <TouchableOpacity 
-          style={[styles.supportButton, { backgroundColor: theme.primary }]} 
-          activeOpacity={0.8}
-        >
+        <View style={[styles.supportButton, { backgroundColor: theme.primary }]}>
           <View style={styles.supportContent}>
             <View style={styles.supportIconContainer}>
               <View style={[styles.heartIconWrapper, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                <Heart size={40} color="#FFFFFF" fill="rgba(255,255,255,0.3)" />
+                <Heart size={40} color="#FF0000" fill="#FF0000" />
               </View>
             </View>
             
@@ -187,9 +184,18 @@ export default function SettingsScreen() {
               <View style={styles.supportCta}>
                 <Text style={styles.supportCtaText}>Every contribution counts 🙏</Text>
               </View>
+
+              <TouchableOpacity 
+                style={styles.donateButton}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.donateButtonText}>Donate</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.stripeText}>Secure payment by Stripe</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
       
       <Text style={[styles.version, { color: theme.secondary }]}>
@@ -314,9 +320,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   supportCta: {
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  supportCtaText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.lg,
+    fontWeight: '600',
+  },
+  donateButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
     borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
@@ -324,11 +339,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    marginBottom: 12,
   },
-  supportCtaText: {
+  donateButtonText: {
     color: '#FFFFFF',
     fontSize: typography.sizes.lg,
     fontWeight: '600',
+  },
+  stripeText: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: typography.sizes.sm,
+    textAlign: 'center',
   },
   version: {
     textAlign: 'center',

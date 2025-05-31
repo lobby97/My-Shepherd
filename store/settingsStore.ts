@@ -13,12 +13,10 @@ export interface NotificationTime {
 
 interface SettingsState {
   isDarkMode: boolean;
-  playbackSpeed: number;
   enableBackgroundMusic: boolean;
   dailyNotifications: boolean;
   notificationTimes: NotificationTime[];
   toggleDarkMode: () => void;
-  setPlaybackSpeed: (speed: number) => void;
   toggleBackgroundMusic: () => void;
   toggleDailyNotifications: () => void;
   addNotificationTime: (hour: number, minute: number, label: string) => void;
@@ -56,14 +54,11 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set, get) => ({
       isDarkMode: false,
-      playbackSpeed: 1.0,
       enableBackgroundMusic: false,
       dailyNotifications: true,
       notificationTimes: defaultNotificationTimes,
       
       toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
-      
-      setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
       
       toggleBackgroundMusic: () => set((state) => ({ 
         enableBackgroundMusic: !state.enableBackgroundMusic 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { Image } from 'expo-image';
-import { Play, Pause, SkipForward, SkipBack, Repeat } from 'lucide-react-native';
+import { Play, Pause, SkipForward, SkipBack } from 'lucide-react-native';
 import { usePlayerStore } from '@/store/playerStore';
 import { useRouter } from 'expo-router';
 import { colors } from '@/constants/colors';
@@ -13,13 +13,11 @@ export const MiniPlayer: React.FC = () => {
   const { 
     currentQuote, 
     isPlaying, 
-    isAutoPlayEnabled,
     currentPlaylist,
     pauseQuote, 
     resumeQuote,
     nextQuote,
-    previousQuote,
-    toggleAutoPlay
+    previousQuote
   } = usePlayerStore();
   const { isDarkMode } = useSettingsStore();
   const router = useRouter();
@@ -43,10 +41,6 @@ export const MiniPlayer: React.FC = () => {
   
   const handlePrevious = () => {
     previousQuote();
-  };
-  
-  const handleToggleAutoPlay = () => {
-    toggleAutoPlay();
   };
   
   const tabBarHeight = Platform.select({
@@ -110,27 +104,12 @@ export const MiniPlayer: React.FC = () => {
           </TouchableOpacity>
           
           {showPlaylistControls && (
-            <>
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPress={handleNext}
-              >
-                <SkipForward size={16} color={theme.primary} />
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                style={[
-                  styles.controlButton,
-                  isAutoPlayEnabled && { backgroundColor: theme.primary }
-                ]}
-                onPress={handleToggleAutoPlay}
-              >
-                <Repeat 
-                  size={16} 
-                  color={isAutoPlayEnabled ? '#FFFFFF' : theme.primary} 
-                />
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              style={styles.controlButton}
+              onPress={handleNext}
+            >
+              <SkipForward size={16} color={theme.primary} />
+            </TouchableOpacity>
           )}
         </View>
       </TouchableOpacity>
