@@ -39,6 +39,13 @@ export default function HomeScreen() {
     playQuote(quotes[0], quotes);
     router.push(`/quote/${quotes[0].id}`);
   };
+
+  const handlePlayRandom = () => {
+    // Start playing from a random quote with all quotes as playlist
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    playQuote(quotes[randomIndex], quotes);
+    router.push(`/quote/${quotes[randomIndex].id}`);
+  };
   
   return (
     <ScrollView 
@@ -47,21 +54,10 @@ export default function HomeScreen() {
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <View style={styles.titleContainer}>
-            <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
-            <Text style={[styles.subtitle, { color: theme.secondary }]}>
-              Today's Word
-            </Text>
-          </View>
-          <TouchableOpacity 
-            style={[styles.playAllHeaderButton, { backgroundColor: theme.primary }]}
-            onPress={handlePlayAll}
-            activeOpacity={0.8}
-          >
-            <Shuffle size={20} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
+        <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
+        <Text style={[styles.subtitle, { color: theme.secondary }]}>
+          Today's Word
+        </Text>
       </View>
       
       <TouchableOpacity 
@@ -86,19 +82,32 @@ export default function HomeScreen() {
           <Text style={styles.dailyReference}>{dailyQuote.reference}</Text>
         </View>
       </TouchableOpacity>
-      
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Teachings</Text>
+
+      {/* Quick Actions Section */}
+      <View style={styles.quickActionsSection}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Quick Actions</Text>
+        <View style={styles.quickActions}>
           <TouchableOpacity 
-            style={[styles.playAllSectionButton, { backgroundColor: theme.muted }]}
+            style={[styles.quickActionButton, { backgroundColor: theme.primary }]}
             onPress={handlePlayAll}
             activeOpacity={0.8}
           >
-            <Play size={16} color={theme.primary} />
-            <Text style={[styles.playAllSectionText, { color: theme.primary }]}>Play All</Text>
+            <Play size={20} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>Play All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.quickActionButton, { backgroundColor: theme.accent }]}
+            onPress={handlePlayRandom}
+            activeOpacity={0.8}
+          >
+            <Shuffle size={20} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>Shuffle</Text>
           </TouchableOpacity>
         </View>
+      </View>
+      
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Featured Teachings</Text>
         {quotes.slice(0, 3).map(quote => (
           <QuoteCard 
             key={quote.id} 
@@ -139,14 +148,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 8,
   },
-  titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  titleContainer: {
-    flex: 1,
-  },
   title: {
     fontSize: typography.sizes.xxl,
     fontFamily: typography.quoteFont,
@@ -155,18 +156,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.md,
     marginBottom: 16,
-  },
-  playAllHeaderButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   dailyContainer: {
     height: 240,
@@ -217,31 +206,42 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.sm,
     fontStyle: 'italic',
   },
-  section: {
+  quickActionsSection: {
+    marginHorizontal: 16,
     marginBottom: 24,
   },
-  sectionHeader: {
+  quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 12,
+  },
+  quickActionButton: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 12,
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  quickActionText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.md,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  section: {
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: '600',
-  },
-  playAllSectionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  playAllSectionText: {
-    fontSize: typography.sizes.sm,
-    fontWeight: '600',
-    marginLeft: 4,
+    marginHorizontal: 16,
+    marginBottom: 12,
   },
   footer: {
     height: 20,
