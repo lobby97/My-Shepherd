@@ -55,6 +55,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: 'calendar',
           hour: 8,
           minute: 0,
           repeats: true,
@@ -69,6 +70,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: 'calendar',
           hour: 12,
           minute: 0,
           repeats: true,
@@ -83,6 +85,7 @@ export class NotificationService {
           sound: true,
         },
         trigger: {
+          type: 'calendar',
           hour: 20,
           minute: 0,
           repeats: true,
