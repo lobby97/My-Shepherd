@@ -40,13 +40,6 @@ export default function HomeScreen() {
     router.push(`/quote/${quotes[0].id}`);
   };
 
-  const handlePlayRandom = () => {
-    // Start playing from a random quote with all quotes as playlist
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    playQuote(quotes[randomIndex], quotes);
-    router.push(`/quote/${quotes[randomIndex].id}`);
-  };
-
   const handlePlayDaily = () => {
     // Play the daily quote
     playQuote(dailyQuote, quotes);
@@ -66,13 +59,6 @@ export default function HomeScreen() {
             Home
           </Text>
         </View>
-        <TouchableOpacity 
-          style={[styles.headerButton, { backgroundColor: theme.muted }]}
-          onPress={handlePlayRandom}
-          activeOpacity={0.8}
-        >
-          <Shuffle size={18} color={theme.primary} />
-        </TouchableOpacity>
       </View>
       
       <TouchableOpacity 
@@ -183,19 +169,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.md,
     marginBottom: 16,
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginTop: 4,
   },
   dailyContainer: {
     height: 240,
