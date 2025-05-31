@@ -4,7 +4,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { usePlayerStore } from '@/store/playerStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { Moon, Sun, Music, Bell, Heart, Play, Star, Coffee, Sparkles } from 'lucide-react-native';
+import { Moon, Sun, Music, Bell, Heart, Play } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationService } from '@/services/notificationService';
 import { NotificationTimeManager } from '@/components/NotificationTimeManager';
@@ -247,40 +247,29 @@ export default function SettingsScreen() {
           style={[styles.supportButton, { backgroundColor: theme.primary }]} 
           activeOpacity={0.8}
         >
-          <View style={styles.supportHeader}>
-            <View style={styles.supportIconsContainer}>
-              <View style={[styles.supportIconWrapper, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                <Coffee size={24} color="#FFFFFF" />
+          <View style={styles.supportContent}>
+            <View style={styles.supportIconContainer}>
+              <View style={[styles.heartIconWrapper, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                <Heart size={32} color="#FFFFFF" fill="rgba(255,255,255,0.3)" />
               </View>
-              <View style={[styles.supportIconWrapper, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
-                <Heart size={20} color="#FFFFFF" />
+            </View>
+            
+            <View style={styles.supportTextContainer}>
+              <Text style={styles.supportTitle}>Pledge Your Support</Text>
+              <Text style={styles.supportDescription}>
+                Help us keep this app free, ad-free, and growing with new features. Your support makes a real difference in bringing God's word to more hearts.
+              </Text>
+              
+              <View style={styles.supportFeatures}>
+                <Text style={styles.supportFeature}>• Keep the app completely free</Text>
+                <Text style={styles.supportFeature}>• Add more teachings and categories</Text>
+                <Text style={styles.supportFeature}>• Improve audio quality and features</Text>
               </View>
-              <Sparkles size={16} color="#FFFFFF" style={styles.sparkleIcon} />
+              
+              <View style={styles.supportCta}>
+                <Text style={styles.supportCtaText}>Every contribution counts 🙏</Text>
+              </View>
             </View>
-            <Text style={styles.supportTitle}>Pledge Your Support</Text>
-          </View>
-          
-          <Text style={styles.supportDescription}>
-            Help us keep this app free, ad-free, and growing with new features. Your support makes a real difference in bringing God's word to more hearts.
-          </Text>
-          
-          <View style={styles.supportFeatures}>
-            <View style={styles.supportFeature}>
-              <Star size={14} color="rgba(255,255,255,0.9)" />
-              <Text style={styles.supportFeatureText}>Keep the app completely free</Text>
-            </View>
-            <View style={styles.supportFeature}>
-              <Star size={14} color="rgba(255,255,255,0.9)" />
-              <Text style={styles.supportFeatureText}>Add more teachings and categories</Text>
-            </View>
-            <View style={styles.supportFeature}>
-              <Star size={14} color="rgba(255,255,255,0.9)" />
-              <Text style={styles.supportFeatureText}>Improve audio quality and features</Text>
-            </View>
-          </View>
-          
-          <View style={styles.supportCta}>
-            <Text style={styles.supportCtaText}>Every contribution counts 🙏</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -396,76 +385,78 @@ const styles = StyleSheet.create({
   },
   supportButton: {
     marginHorizontal: 16,
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: 24,
+    padding: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
-    position: 'relative',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
     overflow: 'hidden',
   },
-  supportHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
+  supportContent: {
+    padding: 28,
   },
-  supportIconsContainer: {
-    flexDirection: 'row',
+  supportIconContainer: {
     alignItems: 'center',
-    marginRight: 16,
-    position: 'relative',
+    marginBottom: 20,
   },
-  supportIconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  heartIconWrapper: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  sparkleIcon: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
+  supportTextContainer: {
+    alignItems: 'center',
   },
   supportTitle: {
     color: '#FFFFFF',
-    fontSize: typography.sizes.xl,
+    fontSize: typography.sizes.xxl,
     fontWeight: '700',
-    flex: 1,
+    marginBottom: 16,
+    textAlign: 'center',
+    fontFamily: typography.quoteFont,
   },
   supportDescription: {
     color: 'rgba(255,255,255,0.95)',
     fontSize: typography.sizes.md,
-    lineHeight: typography.sizes.md * 1.5,
-    marginBottom: 20,
+    lineHeight: typography.sizes.md * 1.6,
+    marginBottom: 24,
+    textAlign: 'center',
   },
   supportFeatures: {
-    marginBottom: 20,
+    alignSelf: 'stretch',
+    marginBottom: 24,
   },
   supportFeature: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  supportFeatureText: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: typography.sizes.sm,
-    marginLeft: 8,
+    marginBottom: 8,
     fontWeight: '500',
+    textAlign: 'center',
   },
   supportCta: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   supportCtaText: {
     color: '#FFFFFF',
-    fontSize: typography.sizes.md,
+    fontSize: typography.sizes.lg,
     fontWeight: '600',
   },
   version: {
