@@ -22,17 +22,17 @@ export default function TabLayout() {
             backgroundColor: theme.card,
             borderTopColor: theme.border,
             borderTopWidth: 1,
-            paddingTop: 16,
+            paddingTop: 12,
             paddingBottom: Platform.select({
-              ios: insets.bottom + 16,
-              default: 20,
+              ios: insets.bottom + 12,
+              default: 16,
             }),
-            paddingHorizontal: 12,
+            paddingHorizontal: 8,
             height: Platform.select({
-              ios: 95 + insets.bottom,
-              android: 95,
-              web: 100,
-              default: 100,
+              ios: 85 + insets.bottom,
+              android: 85,
+              web: 90,
+              default: 90,
             }),
             position: 'absolute',
             bottom: 0,
@@ -50,12 +50,12 @@ export default function TabLayout() {
           },
           headerTintColor: theme.text,
           tabBarLabelStyle: {
-            fontSize: 15,
+            fontSize: 12,
             fontWeight: '600',
-            marginTop: 6,
+            marginTop: 4,
           },
           tabBarIconStyle: {
-            marginBottom: 4,
+            marginBottom: 2,
           },
         }}
       >
@@ -66,7 +66,7 @@ export default function TabLayout() {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Home 
-                size={focused ? 36 : 32} 
+                size={focused ? 26 : 24} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
@@ -80,7 +80,7 @@ export default function TabLayout() {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Search 
-                size={focused ? 36 : 32} 
+                size={focused ? 26 : 24} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
@@ -94,7 +94,7 @@ export default function TabLayout() {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <BookmarkIcon 
-                size={focused ? 36 : 32} 
+                size={focused ? 26 : 24} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
@@ -108,7 +108,7 @@ export default function TabLayout() {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Settings 
-                size={focused ? 36 : 32} 
+                size={focused ? 26 : 24} 
                 color={color} 
                 strokeWidth={focused ? 2.5 : 2}
               />
