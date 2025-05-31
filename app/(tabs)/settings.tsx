@@ -1,10 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, Switch, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Switch, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { Moon, Sun, Music, Bell, Info, Heart } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { NotificationService } from '@/services/notificationService';
+import { Platform } from 'react-native';
 
 export default function SettingsScreen() {
   const { 
@@ -18,10 +20,47 @@ export default function SettingsScreen() {
     toggleDailyNotifications
   } = useSettingsStore();
   const insets = useSafeAreaInsets();
+  const [notificationCount, setNotificationCount] = useState(0);
   
   const theme = isDarkMode ? colors.dark : colors.light;
   
   const playbackOptions = [0.75, 1.0, 1.25, 1.5];
+
+  useEffect(() => {
+    // Check scheduled notifications count
+    const checkNotifications = async () => {
+      const scheduled = await NotificationService.getScheduledNotifications();
+      setNotificationCount(scheduled.length);
+    };
+    
+    checkNotifications();
+  }, [dailyNotifications]);
+
+  const handleNotificationToggle = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert(
+        'Not Available',
+        'Notifications are not supported on web browsers.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    if (!dailyNotifications) {
+      // About to enable notifications
+      const hasPermission = await NotificationService.requestPermissions();
+      if (!hasPermission) {
+        Alert.alert(
+          'Permission Required',
+          'Please enable notifications in your device settings to receive daily quotes.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+    }
+
+    await toggleDailyNotifications();
+  };
   
   return (
     <ScrollView 
@@ -73,15 +112,28 @@ export default function SettingsScreen() {
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
             <Bell size={22} color={theme.text} style={styles.settingIcon} />
-            <Text style={[styles.settingLabel, { color: theme.text }]}>
-              Daily Notifications
-            </Text>
+            <View>
+              <Text style={[styles.settingLabel, { color: theme.text }]}>
+                Daily Notifications
+              </Text>
+              {Platform.OS !== 'web' && dailyNotifications && (
+                <Text style={[styles.settingSubtext, { color: theme.secondary }]}>
+                  {notificationCount} scheduled • 8 AM, 12 PM, 8 PM
+                </Text>
+              )}
+              {Platform.OS === 'web' && (
+                <Text style={[styles.settingSubtext, { color: theme.secondary }]}>
+                  Not available on web
+                </Text>
+              )}
+            </View>
           </View>
           <Switch
-            value={dailyNotifications}
-            onValueChange={toggleDailyNotifications}
+            value={dailyNotifications && Platform.OS !== 'web'}
+            onValueChange={handleNotificationToggle}
             trackColor={{ false: '#767577', true: theme.primary }}
             thumbColor="#FFFFFF"
+            disabled={Platform.OS === 'web'}
           />
         </View>
       </View>
@@ -175,12 +227,17 @@ const styles = StyleSheet.create({
   settingLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   settingIcon: {
     marginRight: 12,
   },
   settingLabel: {
     fontSize: typography.sizes.md,
+  },
+  settingSubtext: {
+    fontSize: typography.sizes.xs,
+    marginTop: 2,
   },
   speedOptions: {
     flexDirection: 'row',

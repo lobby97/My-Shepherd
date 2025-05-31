@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NotificationService } from '@/services/notificationService';
 
 interface SettingsState {
   isDarkMode: boolean;
@@ -15,7 +16,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isDarkMode: false,
       playbackSpeed: 1.0,
       enableBackgroundMusic: false,
@@ -29,13 +30,28 @@ export const useSettingsStore = create<SettingsState>()(
         enableBackgroundMusic: !state.enableBackgroundMusic 
       })),
       
-      toggleDailyNotifications: () => set((state) => ({ 
-        dailyNotifications: !state.dailyNotifications 
-      })),
+      toggleDailyNotifications: async () => {
+        const currentState = get().dailyNotifications;
+        const newState = !currentState;
+        
+        set({ dailyNotifications: newState });
+        
+        if (newState) {
+          await NotificationService.scheduleDailyNotifications();
+        } else {
+          await NotificationService.cancelAllNotifications();
+        }
+      },
     }),
     {
       name: 'settings-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        // Schedule notifications if they're enabled when the app loads
+        if (state?.dailyNotifications) {
+          NotificationService.scheduleDailyNotifications();
+        }
+      },
     }
   )
 );

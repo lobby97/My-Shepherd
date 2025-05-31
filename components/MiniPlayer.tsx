@@ -28,14 +28,14 @@ export const MiniPlayer: React.FC = () => {
   };
   
   const tabBarHeight = Platform.select({
-    ios: 85 + insets.bottom,
-    android: 85,
-    web: 90,
-    default: 90,
+    ios: 75 + insets.bottom,
+    android: 75,
+    web: 80,
+    default: 80,
   });
   
   return (
-    <View style={[styles.container, { bottom: tabBarHeight + 16 }]}>
+    <View style={[styles.container, { bottom: tabBarHeight + 12 }]}>
       <TouchableOpacity
         style={[
           styles.playerContainer, 
@@ -68,9 +68,9 @@ export const MiniPlayer: React.FC = () => {
           onPress={handlePlayPause}
         >
           {isPlaying ? (
-            <Pause size={24} color={theme.primary} />
+            <Pause size={20} color={theme.primary} />
           ) : (
-            <Play size={24} color={theme.primary} />
+            <Play size={20} color={theme.primary} />
           )}
         </TouchableOpacity>
       </TouchableOpacity>
@@ -83,15 +83,15 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    left: 16,
-    right: 16,
+    left: 12,
+    right: 12,
     zIndex: 500,
   },
   playerContainer: {
-    height: 64,
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     borderRadius: 12,
     borderWidth: 1,
     shadowColor: '#000',
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   image: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     borderRadius: 4,
   },
   content: {
@@ -119,9 +119,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   playButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,

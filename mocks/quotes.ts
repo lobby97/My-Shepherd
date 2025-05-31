@@ -400,5 +400,105 @@ export const quotes: Quote[] = [
     imageUrl: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
     audioUrl: "https://example.com/audio/40.mp3",
     reference: "Matthew 7:15-16"
+  },
+  {
+    id: '41',
+    text: "The time is fulfilled, and the kingdom of God is at hand. Repent, and believe in the gospel.",
+    attribution: "Jesus of Nazareth",
+    category: "Kingdom of God",
+    explanation: "Jesus' inaugural message announcing that God's promised reign is near, calling for repentance and faith in the good news.",
+    imageUrl: "https://images.unsplash.com/photo-1504198322253-cfa87a0ff60f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/41.mp3",
+    reference: "Mark 1:15"
+  },
+  {
+    id: '42',
+    text: "Follow Me, and I will make you to become fishers of men.",
+    attribution: "Jesus of Nazareth",
+    category: "Evangelism & Discipleship",
+    explanation: "Jesus calls His first disciples, promising to transform them from fishermen into those who will draw people into God's kingdom.",
+    imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/42.mp3",
+    reference: "Mark 1:17"
+  },
+  {
+    id: '43',
+    text: "If you can believe, all things are possible to him who believes.",
+    attribution: "Jesus of Nazareth",
+    category: "Prayer & Faith",
+    explanation: "Emphasizes the immense power of faith, suggesting that belief is key to unlocking divine possibilities.",
+    imageUrl: "https://images.unsplash.com/photo-1507692049790-de58290a4334?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/43.mp3",
+    reference: "Mark 9:23"
+  },
+  {
+    id: '44',
+    text: "Have faith in God.",
+    attribution: "Jesus of Nazareth",
+    category: "Prayer & Faith",
+    explanation: "A simple yet profound command to place complete trust and belief in God's power and goodness.",
+    imageUrl: "https://images.unsplash.com/photo-1507692049790-de58290a4334?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/44.mp3",
+    reference: "Mark 11:22"
+  },
+  {
+    id: '45',
+    text: "Whatever you ask for in prayer, believe that you have received it, and it will be yours.",
+    attribution: "Jesus of Nazareth",
+    category: "Prayer & Faith",
+    explanation: "Teaches that unwavering faith and belief in the answer to prayer are crucial for receiving what is asked from God.",
+    imageUrl: "https://images.unsplash.com/photo-1507692049790-de58290a4334?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/45.mp3",
+    reference: "Mark 11:24"
+  },
+  {
+    id: '46',
+    text: "Blessed are you when men hate you, and when they exclude you, and revile you, and cast out your name as evil, for the Son of Man's sake. Rejoice in that day and leap for joy!",
+    attribution: "Jesus of Nazareth",
+    category: "Blessings & Beatitudes",
+    explanation: "Declares blessed those who suffer social ostracism, hatred, and slander for their allegiance to Christ, urging them to rejoice in anticipation of their reward.",
+    imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/46.mp3",
+    reference: "Luke 6:22-23"
+  },
+  {
+    id: '47',
+    text: "Be merciful, just as your Father also is merciful.",
+    attribution: "Jesus of Nazareth",
+    category: "Judgment, Mercy & Forgiveness",
+    explanation: "Commands believers to emulate God's merciful nature in their dealings with others.",
+    imageUrl: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/47.mp3",
+    reference: "Luke 6:36"
+  },
+  {
+    id: '48',
+    text: "Give, and it will be given to you: good measure, pressed down, shaken together, and running over will be put into your bosom. For with the same measure that you use, it will be measured back to you.",
+    attribution: "Jesus of Nazareth",
+    category: "Provision & Trust",
+    explanation: "Encourages generous giving with the promise of abundant returns from God, emphasizing that our generosity determines how we receive.",
+    imageUrl: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/48.mp3",
+    reference: "Luke 6:38"
+  },
+  {
+    id: '49',
+    text: "Fear not, little flock, for it is your Father's good pleasure to give you the kingdom.",
+    attribution: "Jesus of Nazareth",
+    category: "Peace & Courage",
+    explanation: "A tender reassurance to His followers, likened to a vulnerable flock, that God delightedly intends to give them His kingdom, dispelling fear.",
+    imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/49.mp3",
+    reference: "Luke 12:32"
+  },
+  {
+    id: '50',
+    text: "Behold, the kingdom of God is within you.",
+    attribution: "Jesus of Nazareth",
+    category: "Kingdom of God",
+    explanation: "Reveals that God's reign and presence are not merely future or external, but can be an internal, present reality in the hearts and lives of believers.",
+    imageUrl: "https://images.unsplash.com/photo-1504198322253-cfa87a0ff60f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+    audioUrl: "https://example.com/audio/50.mp3",
+    reference: "Luke 17:21"
   }
 ];
