@@ -63,25 +63,16 @@ export default function HomeScreen() {
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: theme.text }]}>Voice of the Shepherd</Text>
           <Text style={[styles.subtitle, { color: theme.secondary }]}>
-            Today's Word
+            Home
           </Text>
         </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity 
-            style={[styles.headerButton, { backgroundColor: theme.muted }]}
-            onPress={handlePlayRandom}
-            activeOpacity={0.8}
-          >
-            <Shuffle size={18} color={theme.primary} />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.headerButton, { backgroundColor: theme.primary }]}
-            onPress={handlePlayAll}
-            activeOpacity={0.8}
-          >
-            <Play size={18} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={[styles.headerButton, { backgroundColor: theme.muted }]}
+          onPress={handlePlayRandom}
+          activeOpacity={0.8}
+        >
+          <Shuffle size={18} color={theme.primary} />
+        </TouchableOpacity>
       </View>
       
       <TouchableOpacity 
@@ -113,6 +104,26 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.dailyQuote}>{dailyQuote.text}</Text>
           <Text style={styles.dailyReference}>{dailyQuote.reference}</Text>
+        </View>
+      </TouchableOpacity>
+      
+      {/* Play All Teachings Button */}
+      <TouchableOpacity 
+        style={[styles.playAllCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+        onPress={handlePlayAll}
+        activeOpacity={0.8}
+      >
+        <View style={[styles.playAllIconLeft, { backgroundColor: theme.primary }]}>
+          <Shuffle size={24} color="#FFFFFF" />
+        </View>
+        <View style={styles.playAllContent}>
+          <Text style={[styles.playAllTitle, { color: theme.text }]}>Play All Teachings</Text>
+          <Text style={[styles.playAllSubtitle, { color: theme.secondary }]}>
+            Listen to all {quotes.length} teachings in sequence
+          </Text>
+        </View>
+        <View style={[styles.playAllIconRight, { backgroundColor: theme.primary }]}>
+          <Play size={20} color="#FFFFFF" />
         </View>
       </TouchableOpacity>
       
@@ -173,11 +184,6 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.md,
     marginBottom: 16,
   },
-  headerActions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
   headerButton: {
     width: 40,
     height: 40,
@@ -189,13 +195,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginTop: 4,
   },
   dailyContainer: {
     height: 240,
     marginHorizontal: 16,
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   dailyImage: {
     width: '100%',
@@ -250,6 +257,47 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     fontSize: typography.sizes.sm,
     fontStyle: 'italic',
+  },
+  playAllCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 24,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  playAllIconLeft: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  playAllContent: {
+    flex: 1,
+  },
+  playAllTitle: {
+    fontSize: typography.sizes.lg,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  playAllSubtitle: {
+    fontSize: typography.sizes.sm,
+  },
+  playAllIconRight: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
   },
   section: {
     marginBottom: 24,
