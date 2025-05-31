@@ -216,6 +216,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   footer: {
-    height: 120, // Extra space for mini player
+    height: 160, // Extra space for bigger mini player and tab bar
   },
 });

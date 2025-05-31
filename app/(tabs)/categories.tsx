@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 120, // Extra space for mini player
+    paddingBottom: 160, // Extra space for bigger mini player and tab bar
   },
   grid: {
     flexDirection: 'row',

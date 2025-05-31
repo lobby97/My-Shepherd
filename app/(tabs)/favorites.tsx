@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120, // Extra space for mini player
+    paddingBottom: 160, // Extra space for bigger mini player and tab bar
   },
   emptyContainer: {
     flex: 1,
