@@ -4,48 +4,48 @@ A simple, cross-platform mobile app built with React Native and Expo to help use
 
 ## Features
 
-### Audio
+### 🎵 Audio
 
 * Full-screen and mini audio player
 * Auto-play playlists by theme or favorites
 * Play, pause, skip, repeat, and speed control
 * Visual waveform during playback
 
-### Content
+### 📚 Content
 
 * 50+ teachings of Jesus from the Gospels
 * Grouped into 20 spiritual themes (e.g. Prayer, Kingdom, Love)
 * Each teaching includes a quote, short explanation, and reference
 * Search and browse by category
 
-### Personal
+### ❤️ Personal
 
 * Save favorites
 * Track listening history
 * Daily featured quote
 * See progress over time
 
-### Design
+### 🎨 Design
 
 * Light and dark modes
 * Clean fonts and layout
 * High-quality nature images
 * Smooth transitions and platform-native look
 
-### Notifications
+### 🔔 Notifications
 
 * Optional reminders at 8 AM, 12 PM, and 8 PM
 * Each one features a different teaching
 * Fully customizable
 
-### Customization
+### ⚙️ Customization
 
 * Adjustable playback speed
 * Background music option
 * Choose what content auto-plays
 * Toggle daily notifications
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 * React Native (Expo SDK 52)
 * Expo Router (file-based routing)
