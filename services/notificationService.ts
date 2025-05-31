@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { quotes } from '@/mocks/quotes';
+import { NotificationTime } from '@/store/settingsStore';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -29,6 +30,47 @@ export class NotificationService {
     }
 
     return finalStatus === 'granted';
+  }
+
+  static async scheduleCustomNotifications(notificationTimes: NotificationTime[]): Promise<void> {
+    if (Platform.OS === 'web') {
+      console.log('Notifications not supported on web');
+      return;
+    }
+
+    try {
+      // Cancel existing notifications
+      await Notifications.cancelAllScheduledNotificationsAsync();
+
+      const hasPermission = await this.requestPermissions();
+      if (!hasPermission) {
+        console.log('Notification permissions not granted');
+        return;
+      }
+
+      // Schedule notifications for each enabled time
+      for (const time of notificationTimes) {
+        if (time.enabled) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: `${time.label} ${this.getTimeEmoji(time.hour)}`,
+              body: this.getRandomQuoteText(),
+              sound: true,
+            },
+            trigger: {
+              type: 'calendar',
+              hour: time.hour,
+              minute: time.minute,
+              repeats: true,
+            },
+          });
+        }
+      }
+
+      console.log(`${notificationTimes.filter(t => t.enabled).length} notifications scheduled successfully`);
+    } catch (error) {
+      console.error('Error scheduling notifications:', error);
+    }
   }
 
   static async scheduleDailyNotifications(): Promise<void> {
@@ -119,6 +161,13 @@ export class NotificationService {
       return randomQuote.text.substring(0, maxLength) + '...';
     }
     return randomQuote.text;
+  }
+
+  static getTimeEmoji(hour: number): string {
+    if (hour >= 5 && hour < 12) return '🌅';
+    if (hour >= 12 && hour < 17) return '☀️';
+    if (hour >= 17 && hour < 21) return '🌆';
+    return '🌙';
   }
 
   static async getScheduledNotifications() {

@@ -7,6 +7,7 @@ import { typography } from '@/constants/typography';
 import { Moon, Sun, Music, Bell, Info, Heart, Play } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationService } from '@/services/notificationService';
+import { NotificationTimeManager } from '@/components/NotificationTimeManager';
 import { Platform } from 'react-native';
 
 export default function SettingsScreen() {
@@ -15,6 +16,7 @@ export default function SettingsScreen() {
     playbackSpeed, 
     enableBackgroundMusic, 
     dailyNotifications,
+    notificationTimes,
     toggleDarkMode,
     setPlaybackSpeed,
     toggleBackgroundMusic,
@@ -48,7 +50,7 @@ export default function SettingsScreen() {
     };
     
     checkNotifications();
-  }, [dailyNotifications]);
+  }, [dailyNotifications, notificationTimes]);
 
   const handleNotificationToggle = async () => {
     if (Platform.OS === 'web') {
@@ -75,6 +77,8 @@ export default function SettingsScreen() {
 
     await toggleDailyNotifications();
   };
+  
+  const enabledNotificationTimes = notificationTimes.filter(t => t.enabled);
   
   return (
     <ScrollView 
@@ -214,7 +218,7 @@ export default function SettingsScreen() {
               </Text>
               {Platform.OS !== 'web' && dailyNotifications && (
                 <Text style={[styles.settingSubtext, { color: theme.secondary }]}>
-                  {notificationCount} scheduled • 8 AM, 12 PM, 8 PM
+                  {enabledNotificationTimes.length} times scheduled
                 </Text>
               )}
               {Platform.OS === 'web' && (
@@ -232,6 +236,10 @@ export default function SettingsScreen() {
             disabled={Platform.OS === 'web'}
           />
         </View>
+        
+        {Platform.OS !== 'web' && dailyNotifications && (
+          <NotificationTimeManager isDarkMode={isDarkMode} />
+        )}
       </View>
       
       <View style={styles.section}>
