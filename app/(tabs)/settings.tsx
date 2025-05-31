@@ -4,7 +4,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { usePlayerStore } from '@/store/playerStore';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { Moon, Sun, Music, Bell, Info, Heart, Play, Star, Coffee } from 'lucide-react-native';
+import { Moon, Sun, Music, Bell, Heart, Play, Star, Coffee, Sparkles } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationService } from '@/services/notificationService';
 import { NotificationTimeManager } from '@/components/NotificationTimeManager';
@@ -243,22 +243,44 @@ export default function SettingsScreen() {
       </View>
       
       <View style={styles.section}>
-        <TouchableOpacity style={styles.aboutRow}>
-          <Info size={22} color={theme.text} style={styles.settingIcon} />
-          <Text style={[styles.aboutText, { color: theme.text }]}>About</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={[styles.supportButton, { backgroundColor: theme.primary }]} activeOpacity={0.8}>
-          <View style={styles.supportContent}>
-            <View style={styles.supportIconContainer}>
-              <Coffee size={20} color="#FFFFFF" />
-              <Star size={16} color="#FFFFFF" style={styles.starIcon} />
+        <TouchableOpacity 
+          style={[styles.supportButton, { backgroundColor: theme.primary }]} 
+          activeOpacity={0.8}
+        >
+          <View style={styles.supportHeader}>
+            <View style={styles.supportIconsContainer}>
+              <View style={[styles.supportIconWrapper, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                <Coffee size={24} color="#FFFFFF" />
+              </View>
+              <View style={[styles.supportIconWrapper, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
+                <Heart size={20} color="#FFFFFF" />
+              </View>
+              <Sparkles size={16} color="#FFFFFF" style={styles.sparkleIcon} />
             </View>
-            <View style={styles.supportTextContainer}>
-              <Text style={styles.supportTitle}>Pledge your Support</Text>
-              <Text style={styles.supportSubtitle}>Help us keep this app free and growing</Text>
+            <Text style={styles.supportTitle}>Pledge Your Support</Text>
+          </View>
+          
+          <Text style={styles.supportDescription}>
+            Help us keep this app free, ad-free, and growing with new features. Your support makes a real difference in bringing God's word to more hearts.
+          </Text>
+          
+          <View style={styles.supportFeatures}>
+            <View style={styles.supportFeature}>
+              <Star size={14} color="rgba(255,255,255,0.9)" />
+              <Text style={styles.supportFeatureText}>Keep the app completely free</Text>
             </View>
-            <Heart size={20} color="#FFFFFF" />
+            <View style={styles.supportFeature}>
+              <Star size={14} color="rgba(255,255,255,0.9)" />
+              <Text style={styles.supportFeatureText}>Add more teachings and categories</Text>
+            </View>
+            <View style={styles.supportFeature}>
+              <Star size={14} color="rgba(255,255,255,0.9)" />
+              <Text style={styles.supportFeatureText}>Improve audio quality and features</Text>
+            </View>
+          </View>
+          
+          <View style={styles.supportCta}>
+            <Text style={styles.supportCtaText}>Every contribution counts 🙏</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -372,52 +394,79 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
   },
-  aboutRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  aboutText: {
-    fontSize: typography.sizes.md,
-  },
   supportButton: {
     marginHorizontal: 16,
-    marginTop: 8,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  supportContent: {
+  supportHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 16,
   },
-  supportIconContainer: {
-    position: 'relative',
+  supportIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 16,
+    position: 'relative',
   },
-  starIcon: {
+  supportIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  sparkleIcon: {
     position: 'absolute',
     top: -8,
     right: -8,
   },
-  supportTextContainer: {
-    flex: 1,
-  },
   supportTitle: {
     color: '#FFFFFF',
-    fontSize: typography.sizes.lg,
+    fontSize: typography.sizes.xl,
     fontWeight: '700',
-    marginBottom: 2,
+    flex: 1,
   },
-  supportSubtitle: {
+  supportDescription: {
+    color: 'rgba(255,255,255,0.95)',
+    fontSize: typography.sizes.md,
+    lineHeight: typography.sizes.md * 1.5,
+    marginBottom: 20,
+  },
+  supportFeatures: {
+    marginBottom: 20,
+  },
+  supportFeature: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  supportFeatureText: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: typography.sizes.sm,
+    marginLeft: 8,
     fontWeight: '500',
+  },
+  supportCta: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  supportCtaText: {
+    color: '#FFFFFF',
+    fontSize: typography.sizes.md,
+    fontWeight: '600',
   },
   version: {
     textAlign: 'center',
