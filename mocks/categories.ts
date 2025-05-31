@@ -15,21 +15,21 @@ export const categories: Category[] = [
   },
   {
     id: '3',
-    name: 'Love & Compassion',
+    name: 'Love & Commandments',
     icon: '❤️',
     description: 'Instructions on loving God and others'
   },
   {
     id: '4',
-    name: 'Discipleship',
+    name: 'Obedience & Discipleship',
     icon: '👣',
     description: 'Lessons on following Jesus'
   },
   {
     id: '5',
-    name: 'Righteousness',
+    name: 'Repentance & Righteousness',
     icon: '🌿',
-    description: 'Teachings on right living'
+    description: 'Teachings on right living and turning from sin'
   },
   {
     id: '6',
@@ -45,68 +45,80 @@ export const categories: Category[] = [
   },
   {
     id: '8',
-    name: 'Healing',
+    name: 'Healing & Miracles',
     icon: '🌱',
-    description: 'Words about restoration and wholeness'
+    description: 'Words about restoration and divine power'
   },
   {
     id: '9',
-    name: 'Peace',
+    name: 'Peace & Courage',
     icon: '🕊️',
-    description: 'Teachings on finding true peace'
+    description: 'Teachings on finding true peace and courage'
   },
   {
     id: '10',
-    name: 'Forgiveness',
-    icon: '🤝',
-    description: 'Guidance on forgiving and being forgiven'
+    name: 'Judgment, Mercy & Forgiveness',
+    icon: '⚖️',
+    description: 'Guidance on justice, mercy and forgiveness'
   },
   {
     id: '11',
-    name: 'Humility',
+    name: 'Humility & Service',
     icon: '🙌',
-    description: 'Lessons on humility and service'
+    description: 'Lessons on humility and serving others'
   },
   {
     id: '12',
-    name: 'Eternal Life',
-    icon: '⭐',
-    description: 'Teachings about heaven and eternity'
+    name: 'Provision & Trust',
+    icon: '🍞',
+    description: 'Teachings about trusting God for provision'
   },
   {
     id: '13',
-    name: 'Judgment',
-    icon: '⚖️',
-    description: 'Words about accountability and justice'
+    name: 'Truth & Word',
+    icon: '📖',
+    description: 'Teachings about truth and God\'s word'
   },
   {
     id: '14',
-    name: 'Repentance',
-    icon: '↩️',
-    description: 'Calls to turn from sin toward God'
+    name: 'Blessings & Beatitudes',
+    icon: '✨',
+    description: 'The blessed teachings and promises'
   },
   {
     id: '15',
-    name: 'Service',
-    icon: '🫂',
-    description: 'Instructions on serving others'
+    name: 'Evangelism & Discipleship',
+    icon: '📢',
+    description: 'Instructions on spreading the Gospel'
   },
   {
     id: '16',
-    name: 'Trust',
-    icon: '🛡️',
-    description: 'Teachings on trusting God'
+    name: 'Holy Spirit',
+    icon: '🔥',
+    description: 'Teachings about the Spirit of God'
   },
   {
     id: '17',
-    name: 'Gratitude',
-    icon: '🙌',
-    description: 'Lessons on thankfulness'
+    name: 'Judgment Day & Watchfulness',
+    icon: '⏰',
+    description: 'Warnings about the end times and being ready'
   },
   {
     id: '18',
-    name: 'Perseverance',
-    icon: '🏃',
-    description: 'Encouragement to endure hardship'
+    name: 'Worship & Spirit',
+    icon: '🎵',
+    description: 'Teachings on worship and spiritual life'
+  },
+  {
+    id: '19',
+    name: 'Unity & Oneness',
+    icon: '🤝',
+    description: 'Teachings on unity among believers'
+  },
+  {
+    id: '20',
+    name: 'Resurrection & Eternal Life',
+    icon: '🌅',
+    description: 'Teachings about resurrection and eternal life'
   }
 ];
