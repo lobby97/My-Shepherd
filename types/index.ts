@@ -15,3 +15,18 @@ export interface Category {
   icon: string;
   description: string;
 }
+
+export interface DailyProgress {
+  date: string; // YYYY-MM-DD format
+  quotesListened: number;
+  completed: boolean; // true if reached 3+ quotes
+}
+
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  totalDaysCompleted: number;
+  dailyProgress: DailyProgress[];
+  lastCompletedDate: string | null;
+  todayProgress: DailyProgress;
+}
