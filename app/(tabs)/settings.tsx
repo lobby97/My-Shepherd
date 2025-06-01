@@ -172,10 +172,11 @@ export default function SettingsScreen() {
             <View style={styles.supportTextContainer}>
               <Text style={styles.supportTitle}>Pledge Your Support</Text>
               <Text style={styles.supportDescription}>
-                Help us improve the app. Your support makes a real difference in bringing God's word to more hearts.
+                Help us keep this app free. Your support makes a real difference in bringing God's word to more hearts.
               </Text>
               
               <View style={styles.supportFeatures}>
+                <Text style={styles.supportFeature}>• Keep the app free</Text>
                 <Text style={styles.supportFeature}>• Help us reach more people</Text>
                 <Text style={styles.supportFeature}>• Add more teachings and categories</Text>
                 <Text style={styles.supportFeature}>• Improve audio quality and features</Text>
