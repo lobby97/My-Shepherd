@@ -50,6 +50,41 @@ export function getCategories(): string[] {
   return [...new Set(categories)].sort();
 }
 
+// Category icons mapping
+const categoryIcons: Record<string, string> = {
+  "Kingdom of God": "👑",
+  "Prayer & Faith": "🙏",
+  "Love & Commandments": "❤️",
+  "Obedience & Discipleship": "👣",
+  "Repentance & Righteousness": "🌿",
+  Salvation: "✝️",
+  Wisdom: "📜",
+  "Healing & Miracles": "🌱",
+  "Peace & Courage": "🕊️",
+  "Judgment, Mercy & Forgiveness": "⚖️",
+  "Humility & Service": "🙌",
+  "Provision & Trust": "🍞",
+  "Truth & Word": "📖",
+  "Blessings & Beatitudes": "✨",
+  "Evangelism & Discipleship": "📢",
+  "Holy Spirit": "🔥",
+  "Judgment Day & Watchfulness": "⏰",
+  "Worship & Spirit": "🎵",
+  "Unity & Oneness": "🤝",
+  "Resurrection & Eternal Life": "🌅",
+};
+
+// Get category objects with icons and descriptions
+export function getCategoryObjects() {
+  const categoryNames = getCategories();
+  return categoryNames.map((name, index) => ({
+    id: (index + 1).toString(),
+    name,
+    icon: categoryIcons[name] || "📖",
+    description: `Teachings about ${name.toLowerCase()}`,
+  }));
+}
+
 // Get random command
 export function getRandomCommand(): JesusCommand {
   const commands = getProcessedCommands();

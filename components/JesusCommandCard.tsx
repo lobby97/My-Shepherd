@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Audio, AVPlaybackStatus } from "expo-av";
+import { useAudioPlayer } from "expo-audio";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getAudioAsset } from "../lib/audioAssets";
@@ -19,17 +19,11 @@ interface Props {
 }
 
 export function JesusCommandCard({ command }: Props) {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const player = useAudioPlayer();
   const [isLoading, setIsLoading] = useState(false);
 
   const playAudio = async () => {
     try {
-      if (sound) {
-        await sound.unloadAsync();
-        setSound(null);
-      }
-
       setIsLoading(true);
       const audioAsset = getAudioAsset(command.id);
 
@@ -39,19 +33,8 @@ export function JesusCommandCard({ command }: Props) {
         return;
       }
 
-      const { sound: newSound } = await Audio.Sound.createAsync(audioAsset);
-      setSound(newSound);
-
-      newSound.setOnPlaybackStatusUpdate((status: AVPlaybackStatus) => {
-        if (status.isLoaded) {
-          setIsPlaying(status.isPlaying);
-          if (status.didJustFinish) {
-            setIsPlaying(false);
-          }
-        }
-      });
-
-      await newSound.playAsync();
+      player.replace(audioAsset);
+      player.play();
       setIsLoading(false);
     } catch (error) {
       console.error("Error playing audio:", error);
@@ -60,25 +43,13 @@ export function JesusCommandCard({ command }: Props) {
   };
 
   const pauseAudio = async () => {
-    if (sound) {
-      await sound.pauseAsync();
-    }
+    player.pause();
   };
 
   const stopAudio = async () => {
-    if (sound) {
-      await sound.stopAsync();
-      setIsPlaying(false);
-    }
+    player.seekTo(0);
+    player.pause();
   };
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   const imageSource = getImageAsset(command.id);
 
@@ -105,19 +76,19 @@ export function JesusCommandCard({ command }: Props) {
               styles.audioButton,
               isLoading && styles.audioButtonDisabled,
             ]}
-            onPress={isPlaying ? pauseAudio : playAudio}
+            onPress={player.playing ? pauseAudio : playAudio}
             disabled={isLoading}
           >
             {isLoading ? (
               <Ionicons name="hourglass" size={24} color="#666" />
-            ) : isPlaying ? (
+            ) : player.playing ? (
               <Ionicons name="pause" size={24} color="#fff" />
             ) : (
               <Ionicons name="play" size={24} color="#fff" />
             )}
           </TouchableOpacity>
 
-          {isPlaying && (
+          {player.playing && (
             <TouchableOpacity style={styles.stopButton} onPress={stopAudio}>
               <Ionicons name="stop" size={20} color="#fff" />
             </TouchableOpacity>

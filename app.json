@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.voice-of-the-shepherd"
+      "bundleIdentifier": "com.mandy9943.voiceoftheshepherd"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.voice-of-the-shepherd"
+      "package": "com.mandy9943.voiceoftheshepherd"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -37,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://rork.com/"
+      },
+      "eas": {
+        "projectId": "9cdc78c1-86b2-4092-a304-df410df0695a"
+      }
     }
   }
 }
