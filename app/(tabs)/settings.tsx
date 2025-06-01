@@ -1,29 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Switch, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useSettingsStore } from '@/store/settingsStore';
-import { usePlayerStore } from '@/store/playerStore';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { Moon, Sun, Music, Bell, Heart } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NotificationService } from '@/services/notificationService';
-import { NotificationTimeManager } from '@/components/NotificationTimeManager';
-import { Platform } from 'react-native';
+import { NotificationTimeManager } from "@/components/NotificationTimeManager";
+import { colors } from "@/constants/colors";
+import { typography } from "@/constants/typography";
+import { NotificationService } from "@/services/notificationService";
+import { useSettingsStore } from "@/store/settingsStore";
+import { Bell, Heart, Moon, Music, Sun } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
-  const { 
-    isDarkMode, 
-    enableBackgroundMusic, 
+  const {
+    isDarkMode,
+    enableBackgroundMusic,
     dailyNotifications,
     notificationTimes,
     toggleDarkMode,
     toggleBackgroundMusic,
-    toggleDailyNotifications
+    toggleDailyNotifications,
   } = useSettingsStore();
-  
+
   const insets = useSafeAreaInsets();
   const [notificationCount, setNotificationCount] = useState(0);
-  
+
   const theme = isDarkMode ? colors.dark : colors.light;
 
   useEffect(() => {
@@ -32,16 +39,16 @@ export default function SettingsScreen() {
       const scheduled = await NotificationService.getScheduledNotifications();
       setNotificationCount(scheduled.length);
     };
-    
+
     checkNotifications();
   }, [dailyNotifications, notificationTimes]);
 
   const handleNotificationToggle = async () => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       Alert.alert(
-        'Not Available',
-        'Notifications are not supported on web browsers.',
-        [{ text: 'OK' }]
+        "Not Available",
+        "Notifications are not supported on web browsers.",
+        [{ text: "OK" }]
       );
       return;
     }
@@ -51,9 +58,9 @@ export default function SettingsScreen() {
       const hasPermission = await NotificationService.requestPermissions();
       if (!hasPermission) {
         Alert.alert(
-          'Permission Required',
-          'Please enable notifications in your device settings to receive daily quotes.',
-          [{ text: 'OK' }]
+          "Permission Required",
+          "Please enable notifications in your device settings to receive daily quotes.",
+          [{ text: "OK" }]
         );
         return;
       }
@@ -61,12 +68,15 @@ export default function SettingsScreen() {
 
     await toggleDailyNotifications();
   };
-  
-  const enabledNotificationTimes = notificationTimes.filter(t => t.enabled);
-  
+
+  const enabledNotificationTimes = notificationTimes.filter((t) => t.enabled);
+
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top }]}
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: theme.background, paddingTop: insets.top },
+      ]}
       contentContainerStyle={styles.content}
     >
       <View style={styles.header}>
@@ -75,12 +85,12 @@ export default function SettingsScreen() {
           Customize your experience
         </Text>
       </View>
-      
+
       <View style={[styles.section, { borderBottomColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           Appearance
         </Text>
-        
+
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
             {isDarkMode ? (
@@ -95,17 +105,15 @@ export default function SettingsScreen() {
           <Switch
             value={isDarkMode}
             onValueChange={toggleDarkMode}
-            trackColor={{ false: '#767577', true: theme.primary }}
+            trackColor={{ false: "#767577", true: theme.primary }}
             thumbColor="#FFFFFF"
           />
         </View>
       </View>
-      
+
       <View style={[styles.section, { borderBottomColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Audio
-        </Text>
-        
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Audio</Text>
+
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
             <Music size={22} color={theme.text} style={styles.settingIcon} />
@@ -116,17 +124,17 @@ export default function SettingsScreen() {
           <Switch
             value={enableBackgroundMusic}
             onValueChange={toggleBackgroundMusic}
-            trackColor={{ false: '#767577', true: theme.primary }}
+            trackColor={{ false: "#767577", true: theme.primary }}
             thumbColor="#FFFFFF"
           />
         </View>
       </View>
-      
+
       <View style={[styles.section, { borderBottomColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           Notifications
         </Text>
-        
+
         <View style={styles.settingRow}>
           <View style={styles.settingLabelContainer}>
             <Bell size={22} color={theme.text} style={styles.settingIcon} />
@@ -134,75 +142,91 @@ export default function SettingsScreen() {
               <Text style={[styles.settingLabel, { color: theme.text }]}>
                 Daily Notifications
               </Text>
-              {Platform.OS !== 'web' && dailyNotifications && (
-                <Text style={[styles.settingSubtext, { color: theme.secondary }]}>
+              {Platform.OS !== "web" && dailyNotifications && (
+                <Text
+                  style={[styles.settingSubtext, { color: theme.secondary }]}
+                >
                   {enabledNotificationTimes.length} times scheduled
                 </Text>
               )}
-              {Platform.OS === 'web' && (
-                <Text style={[styles.settingSubtext, { color: theme.secondary }]}>
+              {Platform.OS === "web" && (
+                <Text
+                  style={[styles.settingSubtext, { color: theme.secondary }]}
+                >
                   Not available on web
                 </Text>
               )}
             </View>
           </View>
           <Switch
-            value={dailyNotifications && Platform.OS !== 'web'}
+            value={dailyNotifications && Platform.OS !== "web"}
             onValueChange={handleNotificationToggle}
-            trackColor={{ false: '#767577', true: theme.primary }}
+            trackColor={{ false: "#767577", true: theme.primary }}
             thumbColor="#FFFFFF"
-            disabled={Platform.OS === 'web'}
+            disabled={Platform.OS === "web"}
           />
         </View>
-        
-        {Platform.OS !== 'web' && dailyNotifications && (
+
+        {Platform.OS !== "web" && dailyNotifications && (
           <NotificationTimeManager isDarkMode={isDarkMode} />
         )}
       </View>
-      
+
       <View style={styles.section}>
-        <View style={[styles.supportButton, { backgroundColor: theme.primary }]}>
+        <View
+          style={[styles.supportButton, { backgroundColor: theme.primary }]}
+        >
           <View style={styles.supportContent}>
             <View style={styles.supportIconContainer}>
-              <View style={[styles.heartIconWrapper, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+              <View
+                style={[
+                  styles.heartIconWrapper,
+                  { backgroundColor: "rgba(255,255,255,0.2)" },
+                ]}
+              >
                 <Heart size={40} color="#FF0000" fill="#FF0000" />
               </View>
             </View>
-            
+
             <View style={styles.supportTextContainer}>
               <Text style={styles.supportTitle}>Pledge Your Support</Text>
               <Text style={styles.supportDescription}>
-                Help us keep this app free. Your support makes a real difference in bringing God's word to more hearts.
+                Help us improve the app. Your support makes a real difference in
+                bringing God's word to more hearts.
               </Text>
-              
+
               <View style={styles.supportFeatures}>
-                <Text style={styles.supportFeature}>• Keep the app free</Text>
-                <Text style={styles.supportFeature}>• Help us reach more people</Text>
-                <Text style={styles.supportFeature}>• Add more teachings and categories</Text>
-                <Text style={styles.supportFeature}>• Improve audio quality and features</Text>
-              </View>
-              
-              <View style={styles.supportCta}>
-                <Text style={styles.supportCtaText}>Every contribution counts 🙏</Text>
+                <Text style={styles.supportFeature}>
+                  • Help us reach more people
+                </Text>
+                <Text style={styles.supportFeature}>
+                  • Add more teachings and categories
+                </Text>
+                <Text style={styles.supportFeature}>
+                  • Improve audio quality and features
+                </Text>
               </View>
 
-              <TouchableOpacity 
-                style={styles.donateButton}
-                activeOpacity={0.8}
-              >
+              <View style={styles.supportCta}>
+                <Text style={styles.supportCtaText}>
+                  Every contribution counts 🙏
+                </Text>
+              </View>
+
+              <TouchableOpacity style={styles.donateButton} activeOpacity={0.8}>
                 <Text style={styles.donateButtonText}>Donate</Text>
               </TouchableOpacity>
-              
+
               <Text style={styles.stripeText}>Secure payment by Stripe</Text>
             </View>
           </View>
         </View>
       </View>
-      
+
       <Text style={[styles.version, { color: theme.secondary }]}>
         Version 1.0.0
       </Text>
-      
+
       <View style={styles.footer} />
     </ScrollView>
   );
@@ -237,18 +261,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 12,
   },
   settingLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   settingIcon: {
@@ -265,95 +289,93 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 24,
     padding: 0,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   supportContent: {
     padding: 32,
   },
   supportIconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   heartIconWrapper: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
   supportTextContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   supportTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.xxl,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
     fontFamily: typography.quoteFont,
   },
   supportDescription: {
-    color: 'rgba(255,255,255,0.95)',
+    color: "rgba(255,255,255,0.95)",
     fontSize: typography.sizes.md,
     lineHeight: typography.sizes.md * 1.6,
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: "center",
   },
   supportFeatures: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginBottom: 24,
   },
   supportFeature: {
-    color: 'rgba(255,255,255,0.9)',
+    color: "rgba(255,255,255,0.9)",
     fontSize: typography.sizes.sm,
     marginBottom: 8,
-    fontWeight: '500',
-    textAlign: 'center',
+    fontWeight: "500",
+    textAlign: "center",
   },
   supportCta: {
     marginBottom: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   supportCtaText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   donateButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3,
     marginBottom: 12,
   },
   donateButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   stripeText: {
-    color: 'rgba(255,255,255,0.8)',
+    color: "rgba(255,255,255,0.8)",
     fontSize: typography.sizes.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   version: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: typography.sizes.sm,
     marginTop: 16,
   },

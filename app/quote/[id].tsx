@@ -56,6 +56,17 @@ export default function QuoteDetailScreen() {
 
   const quote = quotes.find((q) => q.id === id);
 
+  // Auto-navigate when currentQuote changes (for playlist progression)
+  useEffect(() => {
+    if (currentQuote && currentQuote.id !== id && currentPlaylist.length > 1) {
+      console.log(
+        `Quote detail screen: Auto-navigating from ${id} to ${currentQuote.id}`
+      );
+      // Navigate to the new quote without adding to history stack
+      router.replace(`/quote/${currentQuote.id}`);
+    }
+  }, [currentQuote?.id, id, currentPlaylist.length, router]);
+
   if (!quote) {
     return (
       <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -73,7 +84,7 @@ export default function QuoteDetailScreen() {
 
   useEffect(() => {
     addToHistory(quote.id);
-  }, [quote.id]);
+  }, [quote.id, addToHistory]);
 
   const handlePlayPause = () => {
     if (isCurrentQuote) {

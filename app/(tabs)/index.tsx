@@ -81,7 +81,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Text style={[styles.title, { color: theme.text }]}>
-              Voice of the Shepherd
+              Voice of the Shepherd 3
             </Text>
             <Text style={[styles.subtitle, { color: theme.secondary }]}>
               Today's Word

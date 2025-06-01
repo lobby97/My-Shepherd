@@ -41,102 +41,76 @@ export class NotificationService {
     }
 
     try {
-      // Cancel existing notifications
       await Notifications.cancelAllScheduledNotificationsAsync();
+      console.log(
+        "Cancelled all previous notifications before scheduling new ones."
+      );
 
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
-        console.log("Notification permissions not granted");
+        console.log("Notification permissions not granted, cannot schedule.");
         return;
       }
 
-      // Schedule notifications for each enabled time
+      let scheduledCount = 0;
       for (const time of notificationTimes) {
         if (time.enabled) {
-          await Notifications.scheduleNotificationAsync({
+          const now = new Date();
+          let intendedNotificationDate = new Date();
+          intendedNotificationDate.setHours(time.hour, time.minute, 0, 0);
+
+          console.log(
+            `Processing ${time.label} for ${time.hour}:${time.minute}`
+          );
+          console.log(`  Current system time (now): ${now.toLocaleString()}`);
+          console.log(
+            `  Initial intended fire time today: ${intendedNotificationDate.toLocaleString()}`
+          );
+
+          if (intendedNotificationDate.getTime() <= now.getTime()) {
+            // Log that it's for tomorrow, but the trigger will just be hour/minute daily
+            let tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            tomorrow.setHours(time.hour, time.minute, 0, 0);
+            console.log(
+              `  Time is past for today. Daily repeat at ${time.hour}:${
+                time.minute
+              } will start tomorrow: ${tomorrow.toLocaleString()}`
+            );
+          }
+
+          // Use DailyTriggerInput for daily repeating notifications
+          const trigger: Notifications.DailyTriggerInput = {
+            // @ts-expect-error Linter has issues with 'SchedulableTriggerInputTypes.DAILY' vs literal 'daily'
+            type: "daily",
+            hour: time.hour,
+            minute: time.minute,
+          };
+
+          const notificationId = await Notifications.scheduleNotificationAsync({
             content: {
               title: `${time.label} ${this.getTimeEmoji(time.hour)}`,
               body: this.getRandomQuoteText(),
               sound: true,
             },
-            trigger: {
-              hour: time.hour,
-              minute: time.minute,
-              repeats: true,
-            } as Notifications.CalendarTriggerInput,
+            trigger,
           });
+          scheduledCount++;
+          // The 'intendedNotificationDate' might be misleading if the OS handles the 'first fire' differently for repeats.
+          // What matters is that it's scheduled for H:M daily.
+          console.log(
+            `  Scheduled: ${time.label} (ID: ${notificationId}). Daily trigger for H:${time.hour} M:${time.minute}.`
+          );
         }
       }
 
+      console.log(`${scheduledCount} notifications scheduled successfully.`);
+      const allScheduled =
+        await Notifications.getAllScheduledNotificationsAsync();
       console.log(
-        `${
-          notificationTimes.filter((t) => t.enabled).length
-        } notifications scheduled successfully`
+        "Currently scheduled by OS:",
+        JSON.stringify(allScheduled, null, 2)
       );
-    } catch (error) {
-      console.error("Error scheduling notifications:", error);
-    }
-  }
-
-  static async scheduleDailyNotifications(): Promise<void> {
-    if (Platform.OS === "web") {
-      console.log("Notifications not supported on web");
-      return;
-    }
-
-    try {
-      // Cancel existing notifications
-      await Notifications.cancelAllScheduledNotificationsAsync();
-
-      const hasPermission = await this.requestPermissions();
-      if (!hasPermission) {
-        console.log("Notification permissions not granted");
-        return;
-      }
-
-      // Morning notification (8 AM)
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Morning Reflection 🌅",
-          body: this.getRandomQuoteText(),
-          sound: true,
-        },
-        trigger: {
-          hour: 8,
-          minute: 0,
-          repeats: true,
-        } as Notifications.CalendarTriggerInput,
-      });
-
-      // Midday notification (12 PM)
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Midday Wisdom ☀️",
-          body: this.getRandomQuoteText(),
-          sound: true,
-        },
-        trigger: {
-          hour: 12,
-          minute: 0,
-          repeats: true,
-        } as Notifications.CalendarTriggerInput,
-      });
-
-      // Evening notification (8 PM)
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Evening Peace 🌙",
-          body: this.getRandomQuoteText(),
-          sound: true,
-        },
-        trigger: {
-          hour: 20,
-          minute: 0,
-          repeats: true,
-        } as Notifications.CalendarTriggerInput,
-      });
-
-      console.log("Daily notifications scheduled successfully");
     } catch (error) {
       console.error("Error scheduling notifications:", error);
     }

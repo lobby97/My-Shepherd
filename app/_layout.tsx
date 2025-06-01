@@ -1,13 +1,14 @@
+import { AudioProvider } from "@/components/AudioProvider";
+import { colors } from "@/constants/colors";
+import { trpc, trpcClient } from "@/lib/trpc";
+import { useSettingsStore } from "@/store/settingsStore";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { useSettingsStore } from "@/store/settingsStore";
-import { colors } from "@/constants/colors";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { trpc, trpcClient } from "@/lib/trpc";
+import React, { useEffect } from "react";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -44,7 +45,9 @@ export default function RootLayout() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <RootLayoutNav />
+        <AudioProvider>
+          <RootLayoutNav />
+        </AudioProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
@@ -70,21 +73,21 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="quote/[id]" 
-          options={{ 
+        <Stack.Screen
+          name="quote/[id]"
+          options={{
             title: "Quote",
             headerTransparent: true,
             headerTintColor: "#FFFFFF",
             headerBackTitle: "Back",
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="category/[id]" 
-          options={{ 
+        <Stack.Screen
+          name="category/[id]"
+          options={{
             title: "Category",
             headerBackTitle: "Categories",
-          }} 
+          }}
         />
       </Stack>
     </>
