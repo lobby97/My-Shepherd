@@ -1,113 +1,124 @@
-import { colors } from "@/constants/colors";
-import { trpc, trpcClient } from "@/lib/trpc";
+import React from "react";
+import { Tabs } from "expo-router";
+import { Home, Search, BookmarkIcon, Settings } from "lucide-react-native";
 import { useSettingsStore } from "@/store/settingsStore";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Audio } from "expo-av";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import { colors } from "@/constants/colors";
+import { MiniPlayer } from "@/components/MiniPlayer";
+import { View, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-// Create a client
-const queryClient = new QueryClient();
-
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    ...FontAwesome.font,
-  });
-
-  useEffect(() => {
-    if (error) {
-      console.error(error);
-      throw error;
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  // Initialize audio session
-  useEffect(() => {
-    const initializeAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
-        });
-        console.log("Audio mode set successfully");
-      } catch (error) {
-        console.error("Failed to set audio mode:", error);
-      }
-    };
-
-    initializeAudio();
-  }, []);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <RootLayoutNav />
-      </QueryClientProvider>
-    </trpc.Provider>
-  );
-}
-
-function RootLayoutNav() {
+export default function TabLayout() {
   const { isDarkMode } = useSettingsStore();
   const theme = isDarkMode ? colors.dark : colors.light;
+  const insets = useSafeAreaInsets();
 
   return (
-    <>
-      <StatusBar style={isDarkMode ? "light" : "dark"} />
-      <Stack
+    <View style={{ flex: 1 }}>
+      <Tabs
         screenOptions={{
+          tabBarActiveTintColor: theme.accent,
+          tabBarInactiveTintColor: theme.secondary,
+          tabBarStyle: {
+            backgroundColor: theme.card,
+            borderTopColor: theme.border,
+            borderTopWidth: 0.5,
+            paddingTop: 6,
+            paddingBottom: Platform.select({
+              ios: insets.bottom + 6,
+              default: 8,
+            }),
+            paddingHorizontal: 4,
+            height: Platform.select({
+              ios: 65 + insets.bottom,
+              android: 65,
+              web: 70,
+              default: 70,
+            }),
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -1 },
+            shadowOpacity: 0.08,
+            shadowRadius: 6,
+            elevation: 8,
+          },
           headerStyle: {
             backgroundColor: theme.background,
           },
           headerTintColor: theme.text,
-          headerBackTitle: "Back",
-          contentStyle: {
-            backgroundColor: theme.background,
+          tabBarLabelStyle: {
+            fontSize: 10,
+            fontWeight: '600',
+            marginTop: 2,
+            marginBottom: 0,
+          },
+          tabBarIconStyle: {
+            marginBottom: -2,
+            marginTop: 2,
           },
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="quote/[id]"
+        <Tabs.Screen
+          name="index"
           options={{
-            title: "Quote",
-            headerTransparent: true,
-            headerTintColor: "#FFFFFF",
-            headerBackTitle: "Back",
+            title: "Home",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <Home 
+                size={focused ? 20 : 18} 
+                color={color} 
+                strokeWidth={focused ? 2.5 : 2}
+              />
+            ),
           }}
         />
-        <Stack.Screen
-          name="category/[id]"
+        <Tabs.Screen
+          name="categories"
           options={{
-            title: "Category",
-            headerBackTitle: "Categories",
+            title: "Categories",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <Search 
+                size={focused ? 20 : 18} 
+                color={color} 
+                strokeWidth={focused ? 2.5 : 2}
+              />
+            ),
           }}
         />
-      </Stack>
-    </>
+        <Tabs.Screen
+          name="favorites"
+          options={{
+            title: "Favorites",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <BookmarkIcon 
+                size={focused ? 20 : 18} 
+                color={color} 
+                strokeWidth={focused ? 2.5 : 2}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: "Settings",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <Settings 
+                size={focused ? 20 : 18} 
+                color={color} 
+                strokeWidth={focused ? 2.5 : 2}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+      <MiniPlayer />
+    </View>
   );
 }
