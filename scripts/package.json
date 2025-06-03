@@ -19,6 +19,12 @@
     "generate-audio-status": "bun run generate-audio.ts --status",
     "test-audio-single": "bun run generate-audio.ts --test --test-ids=1",
     "test-audio-setup": "bun run test-audio-setup.ts",
+    "// === BACKGROUND MUSIC GENERATION SCRIPTS ===": "",
+    "generate-music": "bun run generate-background-music.ts",
+    "generate-music-test": "bun run generate-background-music.ts --test",
+    "generate-music-production": "bun run generate-background-music.ts --production",
+    "generate-music-status": "bun run generate-background-music.ts --status",
+    "generate-music-list": "bun run generate-background-music.ts --list",
     "// === UTILITY SCRIPTS ===": "",
     "test-single": "bun run test-single-image.ts",
     "status": "bun run check-status.ts"

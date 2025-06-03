@@ -1,274 +1,263 @@
-# Voice of the Shepherd - Audio Generation System
+# Voice of the Shepherd - Audio Generation
 
-This system generates high-quality speech audio for Jesus commands using ElevenLabs Text-to-Speech API.
-
-## Features
-
-- **High-Quality Speech**: Uses ElevenLabs Multilingual V2 model
-- **Environment Variables**: Secure API key management
-- **Progress Tracking**: Real-time generation progress
-- **JSON Updates**: Automatic updating of audio URLs in the data file
-- **Test Mode**: Generate audio for specific commands only
-- **Resume Functionality**: Resume interrupted generations (skip existing files)
-- **Status Checking**: Check completion status of audio generation
-- **Error Handling**: Robust error handling with detailed logging
+This directory contains scripts for generating both speech audio and background music for the Voice of the Shepherd mobile app.
 
 ## Prerequisites
 
-1. **ElevenLabs API Key**: Sign up at [ElevenLabs](https://elevenlabs.io) and get your API key
-2. **Bun Runtime**: Install [Bun](https://bun.sh) for running TypeScript scripts
+1. **ElevenLabs API Key**: You need an ElevenLabs API account and API key
+2. **Bun Runtime**: Make sure you have Bun installed for running TypeScript scripts
 
 ## Setup
 
-1. Set your ElevenLabs API key:
-   ```bash
-   export ELEVENLABS_API_KEY=your-api-key-here
-   ```
-
-2. Test your setup:
-   ```bash
-   cd scripts
-   bun run test-audio-setup
-   ```
-
-## Usage
-
-### Quick Start Commands
+Set your ElevenLabs API key as an environment variable:
 
 ```bash
-# Test with a few commands
-bun run generate-audio-test
+export ELEVENLABS_API_KEY="your-api-key-here"
+```
 
-# Generate all audio files
-bun run generate-audio-production
+Or create a `.env` file in the scripts directory:
+
+```
+ELEVENLABS_API_KEY=your-api-key-here
+```
+
+## Speech Audio Generation
+
+Generate speech audio for individual Jesus commands using Text-to-Speech.
+
+### Available Commands
+
+```bash
+# Test mode - generates audio for test IDs only
+npm run generate-audio-test
+
+# Production mode - generates all audio files
+npm run generate-audio-production
 
 # Check status of audio generation
-bun run generate-audio-status
+npm run generate-audio-status
 
-# Resume interrupted generation (skip existing files)
-bun run generate-audio-resume
-
-# Force regenerate all files (including existing ones)
-bun run generate-audio-force
+# Generate specific test IDs
+bun run generate-audio.ts --test --test-ids=1,2,3
 ```
 
-### Detailed Usage
+### Features
 
-#### Check Status
-```bash
-bun run generate-audio-status
-```
-This will show:
-- Total number of commands
-- How many audio files already exist
-- How many are missing
-- IDs of missing files
+- ✅ Converts text from `jesus_commands.json` to speech
+- ✅ Uses ElevenLabs multilingual voice model
+- ✅ Saves MP3 files in `../assets/audio/`
+- ✅ Updates JSON with audio URLs
+- ✅ Skips existing files to avoid regeneration
+- ✅ Rate limiting and error handling
+- ✅ Resume functionality for interrupted generations
 
-#### Resume Generation
-```bash
-bun run generate-audio-resume
-```
-This will:
-- Skip existing audio files
-- Only generate missing audio files
-- Save progress every 10 commands
-- Continue on errors (doesn't stop entire process)
+### Configuration
 
-#### Force Regeneration
-```bash
-bun run generate-audio-force
-```
-This will:
-- Regenerate ALL audio files (ignoring existing ones)
-- Useful if you want to update all audio with new voice settings
-
-#### Test Mode
-```bash
-# Test with default IDs (1, 2, 3)
-bun run generate-audio-test
-
-# Test with specific IDs
-bun run generate-audio.ts --test --test-ids=5,10,15
-```
-
-### Advanced Options
-
-All scripts support these command line options:
-
-```bash
-bun run generate-audio.ts [options]
-
-Options:
-  --test                Run in test mode (generates only test IDs)
-  --production         Run in production mode (generates all audios)
-  --test-ids=1,2,3     Specify test IDs (comma-separated)
-  --status             Check status of audio generation
-  --help, -h           Show this help message
-
-Resume script options:
-bun run generate-audio-resume.ts [options]
-
-Options:
-  --status             Check status of audio generation
-  --force              Force regenerate all audio files (ignore existing ones)
-  --help, -h           Show this help message
-```
-
-## Configuration
-
-The system uses these default settings:
+Edit `CONFIG` in `generate-audio.ts`:
 
 ```typescript
 const CONFIG = {
-  ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY,
-  VOICE_ID: "NFG5qt843uXKj4pFvR7C",           // Multilingual voice
-  MODEL_ID: "eleven_multilingual_v2",          // High-quality model
-  OUTPUT_FORMAT: "mp3_44100_128",              // CD quality MP3
-  INPUT_JSON_PATH: "../assets/jesus_commands.json",
-  OUTPUT_AUDIO_DIR: "../assets/audio",
-  AUDIO_BASE_URL: "https://example.com/audio", // Update for your domain
-  TEST_MODE: true,                             // Start in test mode
-  TEST_IDS: ["1", "2", "3"],                  // Default test commands
+  ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY || "",
+  VOICE_ID: "NFG5qt843uXKj4pFvR7C", // Change voice here
+  MODEL_ID: "eleven_multilingual_v2",
+  OUTPUT_FORMAT: "mp3_44100_128",
+  // ... other settings
 };
 ```
 
-## Output
+## Background Music Generation
 
-### Audio Files
-- **Location**: `../assets/audio/`
-- **Format**: MP3 (44.1kHz, 128kbps)
-- **Naming**: `command_[ID].mp3`
-- **Quality**: High-quality speech optimized for web playback
+Generate background music tracks using ElevenLabs' sound generation API.
 
-### JSON Updates
-The script automatically updates `../assets/jesus_commands.json` with:
-```json
-{
-  "id": "1",
-  "text": "Love your enemies and pray for those who persecute you.",
-  "audioUrl": "https://example.com/audio/command_1.mp3"
+### Available Commands
+
+```bash
+# Test mode - generates first track only
+npm run generate-music-test
+
+# Production mode - generates all music tracks
+npm run generate-music-production
+
+# Check status of music generation
+npm run generate-music-status
+
+# List available music tracks
+npm run generate-music-list
+```
+
+### Available Music Tracks
+
+The script generates 5 different background music tracks:
+
+1. **Peaceful Ambient** (`peaceful_ambient.mp3`)
+   - Gentle ambient music for peaceful contemplation
+   - Soft piano and warm strings, no drums
+
+2. **Uplifting Orchestral** (`uplifting_orchestral.mp3`)
+   - Inspiring orchestral music for motivational moments
+   - Strings and woodwinds, moderate tempo
+
+3. **Contemplative Piano** (`contemplative_piano.mp3`)
+   - Solo piano for deep reflection
+   - Gentle and reflective, slow tempo
+
+4. **Worship Atmosphere** (`worship_atmosphere.mp3`)
+   - Atmospheric music for worship and prayer
+   - Subtle choir voices, ethereal and sacred
+
+5. **Gentle Acoustic Guitar** (`gentle_guitar.mp3`)
+   - Soft acoustic guitar for intimate moments
+   - Fingerpicking style, no percussion
+
+### Features
+
+- ✅ Generates 22-second music loops
+- ✅ 5 different mood-appropriate tracks
+- ✅ Saves MP3 files in `../assets/music/`
+- ✅ Skips existing files to avoid regeneration
+- ✅ Rate limiting and error handling
+- ✅ Customizable music prompts
+
+### Configuration
+
+Edit `MUSIC_TRACKS` array in `generate-background-music.ts` to customize tracks:
+
+```typescript
+const MUSIC_TRACKS: MusicTrack[] = [
+  {
+    id: "peaceful_ambient",
+    name: "Peaceful Ambient", 
+    description: "Gentle ambient music for peaceful contemplation",
+    prompt: "Soft, peaceful ambient music with gentle piano...",
+    filename: "peaceful_ambient.mp3"
+  },
+  // Add more tracks here...
+];
+```
+
+## Directory Structure
+
+After running the scripts, your assets directory will look like:
+
+```
+assets/
+├── audio/                    # Speech audio files
+│   ├── command_1.mp3
+│   ├── command_2.mp3
+│   └── ...
+├── music/                    # Background music files
+│   ├── peaceful_ambient.mp3
+│   ├── uplifting_orchestral.mp3
+│   ├── contemplative_piano.mp3
+│   ├── worship_atmosphere.mp3
+│   └── gentle_guitar.mp3
+├── jesus_commands.json       # Updated with audio URLs
+└── jesus_commands_updated.json
+```
+
+## Usage in Your App
+
+### Playing Speech Audio
+
+```typescript
+// Load command with audio URL
+const command = commands.find(c => c.id === "1");
+const audio = new Audio(command.audioUrl);
+await audio.play();
+```
+
+### Playing Background Music
+
+```typescript
+// Load background music
+const backgroundMusic = new Audio("assets/music/peaceful_ambient.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3; // Lower volume for background
+
+// Play with command audio
+await backgroundMusic.play();
+const commandAudio = new Audio(command.audioUrl);
+await commandAudio.play();
+```
+
+### Crossfading Between Tracks
+
+```typescript
+// Crossfade between different background tracks
+async function crossfadeMusic(fromTrack: string, toTrack: string) {
+  const currentMusic = new Audio(`assets/music/${fromTrack}.mp3`);
+  const nextMusic = new Audio(`assets/music/${toTrack}.mp3`);
+  
+  // Fade out current, fade in next
+  // Implementation depends on your audio library
 }
 ```
 
-## Error Handling
+## API Rate Limits
 
-### Common Issues
+ElevenLabs has rate limits on their API:
 
-1. **Missing API Key**
-   ```
-   ❌ ELEVENLABS_API_KEY environment variable is not set!
-   ```
-   **Solution**: Set your API key: `export ELEVENLABS_API_KEY=your-key`
+- **Free tier**: Limited requests per month
+- **Paid tier**: Higher limits based on plan
 
-2. **API Rate Limits**
-   ```
-   ❌ ElevenLabs API error: 429 - Rate limit exceeded
-   ```
-   **Solution**: The script includes 2-second delays between requests. For heavy usage, consider upgrading your ElevenLabs plan.
-
-3. **Network Issues**
-   ```
-   ❌ Error generating speech for command X: Network error
-   ```
-   **Solution**: Run the resume script to continue from where it left off.
-
-### Resume After Errors
-
-If generation fails or is interrupted:
-
-1. Check what's missing: `bun run generate-audio-status`
-2. Resume generation: `bun run generate-audio-resume`
-3. The script will skip existing files and only generate missing ones
-
-## Performance
-
-- **Speed**: ~2-5 seconds per audio file
-- **Rate Limiting**: 2-second delay between requests
-- **Progress Saving**: Every 10 commands
-- **Memory Efficient**: Processes one file at a time
-
-## File Structure
-
-```
-scripts/
-├── generate-audio.ts           # Main generation script
-├── generate-audio-resume.ts    # Resume functionality script
-├── test-audio-setup.ts         # Setup testing script
-├── package.json               # NPM scripts
-└── AUDIO_README.md            # This documentation
-
-../assets/
-├── jesus_commands.json        # Input data file
-└── audio/                     # Generated audio files
-    ├── command_1.mp3
-    ├── command_2.mp3
-    └── ...
-```
-
-## Workflow Examples
-
-### First Time Setup
-```bash
-# 1. Test your setup
-bun run test-audio-setup
-
-# 2. Generate a few test files
-bun run generate-audio-test
-
-# 3. Check results
-ls ../assets/audio/
-
-# 4. Generate all files
-bun run generate-audio-production
-```
-
-### Resume Interrupted Generation
-```bash
-# 1. Check what's missing
-bun run generate-audio-status
-
-# 2. Resume generation
-bun run generate-audio-resume
-
-# 3. Verify completion
-bun run generate-audio-status
-```
-
-### Update Existing Files
-```bash
-# Regenerate all files with new settings
-bun run generate-audio-force
-```
-
-## Integration Notes
-
-- **Web Integration**: Update `AUDIO_BASE_URL` to match your web server
-- **CDN Integration**: Point `AUDIO_BASE_URL` to your CDN endpoint
-- **API Limits**: Monitor your ElevenLabs usage to avoid rate limits
-- **Storage**: Each audio file is typically 50-200KB
+The scripts include rate limiting delays:
+- Speech audio: 1-2 second delays between requests
+- Background music: 3 second delays between requests
 
 ## Troubleshooting
 
-### Check System Status
+### Common Issues
+
+1. **API Key Not Set**
+   ```
+   ❌ ELEVENLABS_API_KEY environment variable is not set!
+   ```
+   Solution: Set your API key as described in Setup
+
+2. **Rate Limit Exceeded**
+   ```
+   ElevenLabs API error: 429 - Rate limit exceeded
+   ```
+   Solution: Wait and retry, or upgrade your ElevenLabs plan
+
+3. **Network Issues**
+   ```
+   ❌ Error generating speech: fetch failed
+   ```
+   Solution: Check internet connection and try again
+
+### Status Checking
+
+Always check status before running production:
+
 ```bash
-bun run test-audio-setup
+npm run generate-audio-status
+npm run generate-music-status
 ```
 
-### Verify Output
-```bash
-# Check if files exist
-ls -la ../assets/audio/
+### Resuming Interrupted Generations
 
-# Check JSON was updated
-grep -A 3 -B 3 "audioUrl" ../assets/jesus_commands.json | head -20
-```
+Both scripts skip existing files, so you can safely re-run them to resume interrupted generations.
 
-### Monitor Progress
-The scripts provide detailed console output showing:
-- Current command being processed
-- API response status
-- File save locations
-- Progress counters
-- Error details
+## Cost Estimation
 
-For additional help, check the console output for specific error messages and solutions. 
+ElevenLabs pricing (approximate):
+- **Speech Audio**: ~$0.30 per 1000 characters
+- **Background Music**: ~$0.10 per minute of generated audio
+
+For 2000+ commands, budget accordingly for speech generation costs.
+
+## File Sizes
+
+- **Speech Audio**: ~50-200KB per command (30-60 seconds)
+- **Background Music**: ~500KB-1MB per track (22 seconds)
+- **Total**: Varies based on number of commands
+
+## Support
+
+For issues with the audio generation scripts:
+
+1. Check the console output for detailed error messages
+2. Verify your API key is correct and has sufficient credits
+3. Check ElevenLabs API status page
+4. Use `--status` flags to diagnose missing files 
