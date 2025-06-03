@@ -1,4 +1,5 @@
 import { usePlayerStore } from "@/store/playerStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useAudioPlayer } from "expo-audio";
 import React, { useEffect, useRef } from "react";
 
@@ -8,9 +9,22 @@ interface AudioProviderProps {
 
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const audioPlayer = useAudioPlayer();
+  const backgroundMusicPlayer = useAudioPlayer();
   const setAudioPlayer = usePlayerStore((state) => state.setAudioPlayer);
-  const wasPlayingRef = useRef(false);
+  const setBackgroundMusicPlayer = usePlayerStore(
+    (state) => state.setBackgroundMusicPlayer
+  );
+  const startBackgroundMusic = usePlayerStore(
+    (state) => state.startBackgroundMusic
+  );
+  const stopBackgroundMusic = usePlayerStore(
+    (state) => state.stopBackgroundMusic
+  );
+  const { enableBackgroundMusic } = useSettingsStore();
+  const wasPlayingForBgMusicRef = useRef(false);
+  const wasPlayingForTransitionRef = useRef(false);
   const isTransitioningRef = useRef(false);
+  const hasActivePlaylistRef = useRef(false);
 
   useEffect(() => {
     console.log(
@@ -19,6 +33,85 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     );
     setAudioPlayer(audioPlayer);
   }, [audioPlayer, setAudioPlayer]);
+
+  useEffect(() => {
+    console.log(
+      "AudioProvider: Initializing background music player. Available:",
+      !!backgroundMusicPlayer
+    );
+    setBackgroundMusicPlayer(backgroundMusicPlayer);
+  }, [backgroundMusicPlayer, setBackgroundMusicPlayer]);
+
+  // Handle background music based on settings - only start/stop based on setting change
+  useEffect(() => {
+    const { isPlaying, currentQuote } = usePlayerStore.getState();
+
+    if (enableBackgroundMusic && isPlaying && currentQuote) {
+      // Start background music when setting is enabled and there's active playback
+      console.log(
+        "AudioProvider: Starting background music (setting enabled + active playback)"
+      );
+      startBackgroundMusic();
+    } else if (!enableBackgroundMusic) {
+      // Stop background music when setting is disabled
+      console.log(
+        "AudioProvider: Stopping background music (setting disabled)"
+      );
+      stopBackgroundMusic();
+    }
+  }, [enableBackgroundMusic, startBackgroundMusic, stopBackgroundMusic]);
+
+  // Monitor playback state changes to manage background music
+  useEffect(() => {
+    const monitorPlaybackForBackgroundMusic = () => {
+      const { isPlaying, currentQuote, currentPlaylist } =
+        usePlayerStore.getState();
+      const hasActiveSession = currentQuote && currentPlaylist.length > 0;
+
+      if (enableBackgroundMusic) {
+        // Start background music when session begins
+        if (isPlaying && hasActiveSession && !wasPlayingForBgMusicRef.current) {
+          console.log(
+            "AudioProvider: Teaching session started, starting background music"
+          );
+          startBackgroundMusic();
+          hasActivePlaylistRef.current = true;
+        }
+
+        // Stop background music only when session completely ends
+        if (
+          !isPlaying &&
+          wasPlayingForBgMusicRef.current &&
+          !isTransitioningRef.current
+        ) {
+          // Add a small delay to distinguish between transitions and actual stops
+          setTimeout(() => {
+            const currentState = usePlayerStore.getState();
+            // Only stop if we're still not playing and not transitioning after the delay
+            if (!currentState.isPlaying && !isTransitioningRef.current) {
+              console.log(
+                "AudioProvider: Teaching session ended, stopping background music"
+              );
+              stopBackgroundMusic();
+              hasActivePlaylistRef.current = false;
+            }
+          }, 1000); // 1 second delay to allow for transitions
+        }
+      }
+
+      wasPlayingForBgMusicRef.current = isPlaying;
+    };
+
+    if (audioPlayer) {
+      const intervalId = setInterval(monitorPlaybackForBackgroundMusic, 500);
+      return () => clearInterval(intervalId);
+    }
+  }, [
+    audioPlayer,
+    enableBackgroundMusic,
+    startBackgroundMusic,
+    stopBackgroundMusic,
+  ]);
 
   useEffect(() => {
     const monitorAndHandleAudioState = () => {
@@ -60,7 +153,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
       // Scenario 4: Detect track finish to INITIATE a transition
       if (
-        wasPlayingRef.current && // Was playing in the last tick
+        wasPlayingForTransitionRef.current && // Was playing in the last tick
         !isDevicePlaying && // Is NOT playing now on the device
         storeIsPlaying && // Store THOUGHT it should be playing (this implies user didn't pause)
         storeCurrentQuoteId &&
@@ -93,7 +186,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         }
       }
 
-      wasPlayingRef.current = isDevicePlaying;
+      wasPlayingForTransitionRef.current = isDevicePlaying;
     };
 
     if (audioPlayer) {

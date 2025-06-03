@@ -1,4 +1,5 @@
 import { getAudioAsset } from "@/lib/audioAssets";
+import { getPeacefulAmbientMusic } from "@/lib/musicAssets";
 import { Quote, StreakData } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
@@ -14,12 +15,17 @@ interface PlayerState {
   streakData: StreakData;
   showCongratulationsModal: boolean;
   audioPlayer: any;
+  backgroundMusicPlayer: any;
+  isBackgroundMusicPlaying: boolean;
   setAudioPlayer: (player: any) => void;
+  setBackgroundMusicPlayer: (player: any) => void;
   playQuote: (quote: Quote, playlist?: Quote[]) => void;
   pauseQuote: () => void;
   resumeQuote: () => void;
   nextQuote: () => void;
   previousQuote: () => void;
+  startBackgroundMusic: () => void;
+  stopBackgroundMusic: () => void;
   toggleFavorite: (quoteId: string) => void;
   isFavorite: (quoteId: string) => boolean;
   addToHistory: (quoteId: string) => void;
@@ -61,11 +67,53 @@ export const usePlayerStore = create<PlayerState>()(
       streakData: createInitialStreakData(),
       showCongratulationsModal: false,
       audioPlayer: null,
+      backgroundMusicPlayer: null,
+      isBackgroundMusicPlaying: false,
 
       getTodayDateString,
 
       setAudioPlayer: (player) => {
         set({ audioPlayer: player });
+      },
+
+      setBackgroundMusicPlayer: (player) => {
+        set({ backgroundMusicPlayer: player });
+      },
+
+      startBackgroundMusic: async () => {
+        const { backgroundMusicPlayer, isBackgroundMusicPlaying } = get();
+        if (backgroundMusicPlayer && !isBackgroundMusicPlaying) {
+          try {
+            const musicAsset = getPeacefulAmbientMusic();
+            console.log("Starting background music:", !!musicAsset);
+            if (musicAsset) {
+              await backgroundMusicPlayer.replace(musicAsset);
+              backgroundMusicPlayer.loop = true;
+              backgroundMusicPlayer.volume = 0.3; // Lower volume for background
+              await backgroundMusicPlayer.play();
+              set({ isBackgroundMusicPlaying: true });
+              console.log("Background music started successfully");
+            }
+          } catch (error) {
+            console.error("Error starting background music:", error);
+          }
+        } else if (isBackgroundMusicPlaying) {
+          console.log("Background music is already playing");
+        }
+      },
+
+      stopBackgroundMusic: async () => {
+        const { backgroundMusicPlayer, isBackgroundMusicPlaying } = get();
+        if (backgroundMusicPlayer && isBackgroundMusicPlaying) {
+          try {
+            console.log("Stopping background music");
+            await backgroundMusicPlayer.pause();
+            set({ isBackgroundMusicPlaying: false });
+            console.log("Background music stopped successfully");
+          } catch (error) {
+            console.error("Error stopping background music:", error);
+          }
+        }
       },
 
       playQuote: async (quote, playlist = []) => {
@@ -365,6 +413,18 @@ export const usePlayerStore = create<PlayerState>()(
     {
       name: "player-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      // Exclude audio players from persistence since they can't be serialized
+      partialize: (state) => ({
+        currentQuote: state.currentQuote,
+        isPlaying: state.isPlaying,
+        currentPlaylist: state.currentPlaylist,
+        currentIndex: state.currentIndex,
+        favorites: state.favorites,
+        history: state.history,
+        streakData: state.streakData,
+        showCongratulationsModal: state.showCongratulationsModal,
+        // Don't persist: audioPlayer, backgroundMusicPlayer, isBackgroundMusicPlaying
+      }),
       onRehydrateStorage: () => (state) => {
         // Reset daily progress if needed when app loads
         if (state) {
