@@ -7,6 +7,7 @@ import { Bell, Heart, Moon, Music, Sun } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -70,6 +71,27 @@ export default function SettingsScreen() {
   };
 
   const enabledNotificationTimes = notificationTimes.filter((t) => t.enabled);
+
+  const handleDonatePress = async () => {
+    const donationUrl = "https://donate.stripe.com/6oU5kCdF83Qy4MJd6w9oc00";
+
+    try {
+      const supported = await Linking.canOpenURL(donationUrl);
+      if (supported) {
+        await Linking.openURL(donationUrl);
+      } else {
+        Alert.alert(
+          "Error",
+          "No se pudo abrir el enlace de donación. Por favor, intenta más tarde.",
+          [{ text: "OK" }]
+        );
+      }
+    } catch (error) {
+      Alert.alert("Error", "Ocurrió un error al abrir el enlace de donación.", [
+        { text: "OK" },
+      ]);
+    }
+  };
 
   return (
     <ScrollView
@@ -191,8 +213,10 @@ export default function SettingsScreen() {
             <View style={styles.supportTextContainer}>
               <Text style={styles.supportTitle}>Pledge Your Support</Text>
               <Text style={styles.supportDescription}>
-                Help us improve the app. Your support makes a real difference in
-                bringing God's word to more hearts.
+                If this app has been useful to you, please consider supporting
+                us with a donation. Every bit helps us keep improving the the
+                app. Your support makes a real difference in bringing God’s word
+                to more people.
               </Text>
 
               <View style={styles.supportFeatures}>
@@ -207,13 +231,11 @@ export default function SettingsScreen() {
                 </Text>
               </View>
 
-              <View style={styles.supportCta}>
-                <Text style={styles.supportCtaText}>
-                  Every contribution counts 🙏
-                </Text>
-              </View>
-
-              <TouchableOpacity style={styles.donateButton} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.donateButton}
+                activeOpacity={0.8}
+                onPress={handleDonatePress}
+              >
                 <Text style={styles.donateButtonText}>Donate</Text>
               </TouchableOpacity>
 
