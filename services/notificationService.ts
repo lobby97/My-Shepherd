@@ -122,6 +122,14 @@ export class NotificationService {
     }
 
     try {
+      // It's safer to ensure permissions exist before trying to cancel.
+      // On some iOS versions, this can crash if permissions have never been granted.
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permissions not granted, no notifications to cancel.");
+        return;
+      }
+
       await Notifications.cancelAllScheduledNotificationsAsync();
       console.log("All notifications cancelled");
     } catch (error) {
