@@ -9,12 +9,13 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
+import "react-native-gesture-handler";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// Prevent splash screen from auto-hiding before fonts are loaded
 SplashScreen.preventAutoHideAsync();
 
 // Create a client
@@ -27,18 +28,22 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (error) {
-      console.error(error);
-      throw error;
+      console.error("Font loading error:", error);
+      // Don't throw the error - just log it and continue
+      // The app can still function with system fonts
     }
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded || error) {
+      // Hide splash screen when fonts are loaded OR if there's an error
+      // This prevents the app from being stuck on splash screen
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, error]);
 
-  if (!loaded) {
+  // Don't block the app if fonts fail to load
+  if (!loaded && !error) {
     return null;
   }
 
