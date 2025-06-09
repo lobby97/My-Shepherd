@@ -41,16 +41,17 @@ export class NotificationService {
     }
 
     try {
-      await Notifications.cancelAllScheduledNotificationsAsync();
-      console.log(
-        "Cancelled all previous notifications before scheduling new ones."
-      );
-
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
         console.log("Notification permissions not granted, cannot schedule.");
         return;
       }
+
+      // NOW it's safe to cancel previous notifications.
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      console.log(
+        "Cancelled all previous notifications before scheduling new ones."
+      );
 
       let scheduledCount = 0;
       for (const time of notificationTimes) {
