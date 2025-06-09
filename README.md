@@ -1,4 +1,4 @@
-# Voice of the Shepherd
+# My Shepherd App
 
 A simple, cross-platform mobile app built with React Native and Expo to help users listen to and reflect on the teachings of Jesus Christ. Inspired by audio and meditation apps, it combines Scripture, sound, and clean design.
 
@@ -58,5 +58,5 @@ A simple, cross-platform mobile app built with React Native and Expo to help use
 
 ## Why I Built This
 
-There are plenty of apps for meditation, but very few that offer the same calm, intentional experience centered on the words of Jesus. *Voice of the Shepherd* is my attempt to bridge that gap—an app that feels sacred, modern, and simple to use. If you're commuting, resting, or spending quiet time with God, this app is a space to reflect, listen, and grow.
+There are plenty of apps for meditation, but very few that offer the same calm, intentional experience centered on the words of Jesus. *My Shepherd* is my attempt to bridge that gap—an app that feels sacred, modern, and simple to use. If you're commuting, resting, or spending quiet time with God, this app is a space to listen and grow.
 
